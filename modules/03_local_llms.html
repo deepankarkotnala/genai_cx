@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+
+<html data-theme="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#f4f5f8" name="theme-color"/>
+<title>03 · Local LLMs &amp; Ollama — GenAI Mastery</title>
+<!-- Interview Preparation brand metadata -->
+<link href="../assets/brand/favicon.svg?v=20260727c" rel="icon" type="image/svg+xml"/>
+<link href="../assets/brand/favicon-32.png?v=20260727c" rel="icon" sizes="32x32" type="image/png"/>
+<link href="../assets/brand/favicon.ico?v=20260727c" rel="shortcut icon"/>
+<link href="../assets/brand/apple-touch-icon.png?v=20260727c" rel="apple-touch-icon" sizes="180x180"/>
+<link href="../assets/brand/site.webmanifest?v=20260727c" rel="manifest"/>
+<link color="#6f47f5" href="../assets/brand/safari-pinned-tab.svg?v=20260727c" rel="mask-icon"/>
+<link href="../assets/brand/social-card.png?v=20260727c" rel="image_src"/>
+<meta content="Switch job" name="application-name"/>
+<meta content="Switch job" name="apple-mobile-web-app-title"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="yes" name="mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="#2563eb" name="msapplication-TileColor"/>
+<meta content="../assets/brand/browserconfig.xml?v=20260727c" name="msapplication-config"/>
+<meta content="website" property="og:type"/>
+<meta content="Switch job Learning Platform" property="og:site_name"/>
+<meta content="03 · Local LLMs &amp; Ollama — GenAI Mastery" property="og:title"/>
+<meta content="Run LLMs on your own hardware: quantization, GGUF, VRAM math, Ollama setup, Modelfiles, the local serving API, and choosing between Llama, Qwen and Gemma." property="og:description"/>
+<meta content="../assets/brand/social-card.png?v=20260727c" property="og:image"/>
+<meta content="1200" property="og:image:width"/>
+<meta content="630" property="og:image:height"/>
+<meta content="Switch job learning platform logo" property="og:image:alt"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="03 · Local LLMs &amp; Ollama — GenAI Mastery" name="twitter:title"/>
+<meta content="Run LLMs on your own hardware: quantization, GGUF, VRAM math, Ollama setup, Modelfiles, the local serving API, and choosing between Llama, Qwen and Gemma." name="twitter:description"/>
+<meta content="../assets/brand/social-card.png?v=20260727c" name="twitter:image"/>
+<link href="../assets/brand/favicon-16.png?v=20260727c" rel="icon" sizes="16x16" type="image/png"/>
+<!-- /Interview Preparation brand metadata -->
+<meta content="Run LLMs on your own hardware: quantization, GGUF, VRAM math, Ollama setup, Modelfiles, the local serving API, and choosing between Llama, Qwen and Gemma." name="description"/>
+<!-- Theme before first paint. Without this the document paints with the light
+     tokens and only flips when app.js runs at the end of <body>, which is a
+     white flash on every navigation in dark mode. Mirrors app.js's getTheme()
+     exactly — same key, same "light" default — so the pre-paint value can never
+     disagree with what the scripts apply a moment later. Inline and blocking on
+     purpose: an external file would cost a round trip before first paint. -->
+<script>(function(){try{var d=document.documentElement;var t=localStorage.getItem("gp.theme")||"light";d.setAttribute("data-theme",t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="dark"?"#17191e":"#f3f4f6";/* Reading size and width, same reason as the theme: applying them after first paint reflows the whole lesson. Contract shared with enhance.js: key "gp.reading", {"size","width"}; unknown size -> "s" on phones and "xs" above 860px, unknown width -> "wide", unknown align -> "left". */var r={};try{r=JSON.parse(localStorage.getItem("gp.reading"))||{};}catch(e2){}var mob=!!(window.matchMedia&&window.matchMedia("(max-width:860px)").matches);var sz=["xs","s","m","l","xl"].indexOf(r.size)>=0?r.size:(mob?"s":"xs");var wd=["default","wide","full"].indexOf(r.width)>=0?r.width:"wide";var al=r.align==="justify"?"justify":"left";d.setAttribute("data-reading-size",sz);d.setAttribute("data-reading-width",wd);d.setAttribute("data-reading-align",al);/* Page transitions. `PageRevealEvent` is the only honest test for a CROSS-document view transition — CSS @supports(view-transition-name) answers yes on browsers that only do the same-document kind, which is what silently disabled the fallback and left them with a hard cut. Pre-paint for the same reason as the theme: gating this from a body script lets the arrival animation start and then cancels it, which is the flash it removes. */if("PageRevealEvent" in window){d.classList.add("xvt");window.addEventListener("pagereveal",function(ev){if(!ev.viewTransition)return;d.classList.add("vt-in");var off=function(){d.classList.remove("vt-in")};ev.viewTransition.finished.then(off,off);});}}catch(e){}})();</script>
+<link href="../assets/styles.css?v=20260805a" rel="stylesheet"/>
+<link href="../assets/office-theme.css?v=20260805c" rel="stylesheet"/>
+<link href="../assets/genai-motion.css?v=20260804c" rel="stylesheet"/>
+<link href="../assets/glossary.css?v=20260802b" rel="stylesheet"/>
+<!-- Release 2 runtime. The manifest loads first, the renderer second; classic
+     deferred scripts execute in document order after parsing, so the nav slot
+     exists and the manifest is defined before the renderer runs. The authored
+     links inside [data-page-nav] stay in the source and are replaced only after
+     page, route and fragment have all resolved. -->
+<script defer src="../assets/curriculum.js?v=20260804c"></script>
+<script defer src="../assets/page-nav.js?v=20260804c"></script>
+</head>
+<body data-curriculum-id="local-llms" data-page="03">
+<div class="app">
+<aside class="sidebar">
+<div class="brand">
+<a class="brand-link" href="../index.html" aria-label="Switch job home">
+<span class="brand-mark" aria-hidden="true"><img src="../assets/brand/switch-job-logo.png?v=20260727c" alt=""/></span>
+<div class="brand-text"><strong>Switch job</strong><span>Learning Platform</span></div>
+</a>
+</div>
+<div class="search-wrap">
+<div class="search-box">
+<svg fill="none" height="15" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="15"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+<input data-search="" placeholder="Search modules…  ( / )" type="text"/>
+</div>
+<div class="search-results"></div>
+</div>
+<nav class="nav"></nav>
+</aside>
+<div class="backdrop"></div>
+<div class="main">
+<header class="topbar">
+<button aria-label="Menu" class="icon-btn menu-btn">
+<svg fill="none" height="18" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="18"><path d="M3 12h18M3 6h18M3 18h18"></path></svg>
+</button>
+<div class="crumbs">Foundations / <b>03 · Local LLMs &amp; Ollama</b></div>
+<button aria-label="Toggle theme" class="icon-btn" data-theme-toggle=""></button>
+</header>
+<div class="content-wrap">
+<main class="content">
+
+<div class="eyebrow"><span class="dot"></span> Module 03 · Foundations track</div>
+<h1>Local LLMs and Ollama</h1>
+<p class="lead">Module 02 explained where the memory goes. This page turns that into a
+number you can check against your own machine, then runs a model on it. Install Ollama
+here — the lab in phase 4 depends on it.</p>
+<div class="meta-row">
+<span class="pill blue">⏱ Study + practice · 8–12 h</span>
+<span class="pill">Difficulty · Intermediate</span>
+<span class="pill purple">Prereq · Modules 01, 02</span>
+</div>
+
+<!-- ================= 1 ================= -->
+<h2 id="known">1 · What you already know</h2>
+<p>From module 01: parameters are numbers, and "7B" means seven billion of them. From
+module 02: the KV cache grows with every token and is often what runs out first.</p>
+<p>So far every model you have used ran on somebody else's hardware. <b>This page is about
+running one on yours, and about knowing before you start whether it will fit.</b></p>
+
+<!-- ================= 2 ================= -->
+<h2 id="breaks">2 · What breaks now</h2>
+<p>Four ordinary situations where a hosted API is the wrong answer:</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Situation</th><th>Why the API fails you</th></tr></thead>
+<tbody>
+<tr><td>The data cannot leave the building</td><td>Health records, legal documents, unreleased code. A contract term, not a preference</td></tr>
+<tr><td>You are running 50 million classifications</td><td>At small per-call prices this is still six figures. A 3B model on one GPU is not</td></tr>
+<tr><td>You need the same answer next year</td><td>Hosted model versions are retired. Weights on your disk are not</td></tr>
+<tr><td>You are developing offline, or on a plane</td><td>No network, no model</td></tr>
+</tbody>
+</table>
+</div>
+<p>And the question that stops people immediately: <b>will a 7B model even run on my
+laptop?</b> That is arithmetic, and you can do it before downloading anything.</p>
+
+<!-- ================= 3 ================= -->
+<h2 id="breakdown">3 · Simple breakdown — local serving vs hosted API</h2>
+
+<section class="breakdown">
+
+<h3 class="bd-tech"><span class="bd-tag">A</span> Local serving</h3>
+
+<h4>Basic level</h4>
+<p class="bd-item"><b class="no-jargon">What it is.</b> Local serving runs the model
+weights on hardware you control, behind a small HTTP server such as Ollama, vLLM or
+llama.cpp, which your application calls over localhost.</p>
+<p class="bd-item"><b class="no-jargon">Core purpose.</b> It keeps the data and the
+weights on your own machine, and removes per-token pricing in exchange for the cost of the
+hardware.</p>
+<p class="bd-item"><b class="no-jargon">Execution model.</b></p>
+
+<svg class="bd-svg" viewBox="0 0 900 130" role="img" aria-labelledby="loc-t loc-d">
+<title id="loc-t">Local serving</title>
+<desc id="loc-d">The application sends a request over localhost to the Ollama server, which loads the quantised weights into GPU or unified memory, runs the forward pass, and streams tokens back. Nothing leaves the machine.</desc>
+<defs><marker id="ah-lo" markerWidth="9" markerHeight="9" refX="8" refY="3.2" orient="auto"><path d="M0 0 L8 3.2 L0 6.4 z" fill="var(--text-muted)"></path></marker></defs>
+<rect class="box b1" x="11" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b2" x="191" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b3" x="371" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b4" x="551" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b5" x="731" y="40" width="158" height="58" rx="12"></rect>
+<path class="arw" d="M172 69 H186" marker-end="url(#ah-lo)"></path>
+<path class="arw" d="M352 69 H366" marker-end="url(#ah-lo)"></path>
+<path class="arw" d="M532 69 H546" marker-end="url(#ah-lo)"></path>
+<path class="arw" d="M712 69 H726" marker-end="url(#ah-lo)"></path>
+<text class="lbl" x="90" y="74">your app</text>
+<text class="lbl mono" x="270" y="65">localhost</text>
+<text class="lbl mono" x="270" y="83">:11434</text>
+<text class="lbl" x="450" y="65">Ollama loads</text>
+<text class="lbl" x="450" y="83">GGUF weights</text>
+<text class="lbl" x="630" y="65">forward pass</text>
+<text class="lbl" x="630" y="83">on your GPU</text>
+<text class="lbl" x="810" y="74">tokens back</text>
+<circle class="pkt" cx="90" cy="18" r="7"></circle>
+</svg>
+
+<h4>Intermediate level</h4>
+<p class="bd-item"><b class="no-jargon">Architecture under the hood.</b> Ollama wraps
+llama.cpp. Weights are stored in <b>GGUF</b> files, already quantised, and memory-mapped
+at load time. Layers are placed on the GPU up to the memory you have; the rest stay on the
+CPU, which is why a model can run "partially offloaded" and be very slow. vLLM is the
+other common choice: it keeps weights in GPU memory, adds paged attention and continuous
+batching, and is built for many concurrent users rather than one.</p>
+<p class="bd-item"><b class="no-jargon">State handling.</b> The weights are loaded once and
+stay resident until the model is evicted, which Ollama does after about five idle minutes.
+Per request there is only the KV cache from module 02. Conversation history is not stored
+by the server — your application re-sends it.</p>
+<p class="bd-item"><b class="no-jargon">Limitations and advanced features.</b> Open-weight
+models of a size that fits one machine are behind the largest hosted models on hard
+reasoning. Throughput is one machine's worth. Quantisation below 4-bit degrades quality
+noticeably. Advanced use includes serving several models by swapping, custom
+<code>Modelfile</code> definitions, and moving to vLLM once more than a handful of
+concurrent users appear.</p>
+
+<h3 class="bd-tech"><span class="bd-tag">B</span> Hosted API</h3>
+
+<h4>Basic level</h4>
+<p class="bd-item"><b class="no-jargon">What it is.</b> A hosted API is a provider's HTTPS
+endpoint that accepts your messages, runs the model on their hardware, and returns the
+result, billed per token.</p>
+<p class="bd-item"><b class="no-jargon">Core purpose.</b> It gives immediate access to
+models far larger than your hardware could hold, with no capacity planning.</p>
+<p class="bd-item"><b class="no-jargon">Execution model.</b></p>
+
+<svg class="bd-svg" viewBox="0 0 900 130" role="img" aria-labelledby="hos-t hos-d">
+<title id="hos-d">Hosted API</title>
+<desc id="hos-t">The application sends an HTTPS request carrying an API key to the provider, which queues and batches it with other users' requests, runs it on their GPUs, streams tokens back, and records the token counts for billing.</desc>
+<defs><marker id="ah-ho" markerWidth="9" markerHeight="9" refX="8" refY="3.2" orient="auto"><path d="M0 0 L8 3.2 L0 6.4 z" fill="var(--text-muted)"></path></marker></defs>
+<rect class="box b1" x="11" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b2" x="191" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b3" x="371" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b4" x="551" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b5" x="731" y="40" width="158" height="58" rx="12"></rect>
+<path class="arw" d="M172 69 H186" marker-end="url(#ah-ho)"></path>
+<path class="arw" d="M352 69 H366" marker-end="url(#ah-ho)"></path>
+<path class="arw" d="M532 69 H546" marker-end="url(#ah-ho)"></path>
+<path class="arw" d="M712 69 H726" marker-end="url(#ah-ho)"></path>
+<text class="lbl" x="90" y="74">your app</text>
+<text class="lbl" x="270" y="65">HTTPS +</text>
+<text class="lbl" x="270" y="83">API key</text>
+<text class="lbl" x="450" y="65">queue and</text>
+<text class="lbl" x="450" y="83">batch</text>
+<text class="lbl" x="630" y="65">their GPUs</text>
+<text class="lbl" x="630" y="83">run it</text>
+<text class="lbl" x="810" y="65">tokens back</text>
+<text class="lbl" x="810" y="83">+ billing</text>
+<circle class="pkt" cx="90" cy="18" r="7"></circle>
+</svg>
+
+<h4>Intermediate level</h4>
+<p class="bd-item"><b class="no-jargon">Architecture under the hood.</b> A load balancer, a
+queue, and a fleet running continuous batching. Your request is interleaved with other
+customers', which is why latency varies with their load rather than yours. Rate limits are
+applied per key, usually as requests and tokens per minute.</p>
+<p class="bd-item"><b class="no-jargon">State handling.</b> None that you own. Each request
+carries its whole context. Some providers cache identical prompt prefixes for a few
+minutes and charge less for the cached part.</p>
+<p class="bd-item"><b class="no-jargon">Limitations and advanced features.</b> The data
+leaves your network. Model versions are retired on the provider's schedule, so "latest"
+can change your outputs without a deploy on your side. Costs scale linearly with usage
+forever. Advanced features include batch endpoints at lower prices, prompt caching, and
+provisioned capacity.</p>
+
+<h3 class="bd-diff">The core differences</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th></th><th>Local serving</th><th>Hosted API</th></tr></thead>
+<tbody>
+<tr><th>Workflow design</th>
+<td>You size the hardware, pick the quantisation and manage load. Capacity is fixed and known.</td>
+<td>You send a request. Capacity is elastic but shared, and you cannot see the queue.</td></tr>
+<tr><th>Error recovery</th>
+<td>Failures are yours: out of memory, model not pulled, GPU driver. All reproducible and fixable on the machine.</td>
+<td>Failures are rate limits, timeouts and outages. You cannot fix them, only retry and fall back.</td></tr>
+<tr><th>Architectural paradigm</th>
+<td>A fixed local resource with a hard memory ceiling.</td>
+<td>A metered shared service with a soft rate ceiling.</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="bd-short">In short — which one to choose</h3>
+<p class="bd-choose">Run locally when:</p>
+<ul>
+<li>The data is not permitted to leave your network.</li>
+<li>Volume is high and the task is simple enough for a small model.</li>
+<li>You need reproducible output over months or years.</li>
+<li>You are developing, testing, or running this course's labs.</li>
+</ul>
+<p class="bd-choose">Use a hosted API when:</p>
+<ul>
+<li>The task needs the strongest available reasoning.</li>
+<li>Traffic is spiky and you do not want idle hardware.</li>
+<li>You are proving a product idea and hardware would be premature.</li>
+</ul>
+<p class="bd-choose bd-avoid">Do not run locally when:</p>
+<ul>
+<li>You have not done the memory arithmetic in section 5.</li>
+<li>You need many concurrent users and have one GPU.</li>
+<li>Nobody on the team will own driver and dependency upgrades.</li>
+</ul>
+</section>
+
+<!-- ================= 4 ================= -->
+<h2 id="without">4 · Without the technology</h2>
+<p>Loading a model without a serving layer is possible, and shows what the server is
+doing for you:</p>
+<pre><code>import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+name = "mistralai/Mistral-7B-Instruct-v0.2"
+tok = AutoTokenizer.from_pretrained(name)
+model = AutoModelForCausalLM.from_pretrained(name, torch_dtype=torch.float16)
+model.to("cuda")
+</code></pre>
+<p>On a 16&nbsp;GB card this fails. 7 billion parameters at 2 bytes each is 14&nbsp;GB
+before any KV cache, and PyTorch needs working space on top.</p>
+<p>You also now own: quantising the weights, deciding which layers go to CPU, holding the
+model in memory between requests, batching, and streaming. <b>Ollama is those six jobs
+plus an HTTP endpoint.</b></p>
+
+<!-- ================= 5 ================= -->
+<h2 id="mechanics">5 · Runtime mechanics</h2>
+<p>The arithmetic first, because it decides everything else. Memory has three parts:</p>
+<pre><code>weights_gb  = parameters_billions * bytes_per_parameter
+kv_cache_gb = 2 * layers * kv_heads * head_dim * context * bytes / 1e9
+overhead_gb = 1 to 2          # activations, fragmentation, the runtime itself
+</code></pre>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Precision</th><th>Bytes per parameter</th><th>A 7B model</th><th>Quality</th></tr></thead>
+<tbody>
+<tr><td>fp16 / bf16</td><td>2</td><td>14 GB</td><td>Reference</td></tr>
+<tr><td>int8 / Q8</td><td>1</td><td>7 GB</td><td>Almost identical</td></tr>
+<tr><td><b>Q4_K_M</b></td><td>~0.55</td><td><b>~4 GB</b></td><td>Small, usually acceptable loss</td></tr>
+<tr><td>Q2</td><td>~0.3</td><td>2.5 GB</td><td>Noticeably worse; rarely worth it</td></tr>
+</tbody>
+</table>
+</div>
+<p>So a 7B model at Q4_K_M is about 4&nbsp;GB of weights, plus roughly 0.5&nbsp;GB of KV
+cache at 4k context, plus 1&nbsp;GB of overhead. <b>About 5.5&nbsp;GB — which fits an
+8&nbsp;GB card, and does not fit a 6&nbsp;GB one once your desktop is also using it.</b></p>
+
+<svg class="bd-svg" viewBox="0 0 900 175" role="img" aria-labelledby="q-t q-d">
+<title id="q-t">Quantisation and memory</title>
+<desc id="q-d">The same seven billion parameter model needs fourteen gigabytes at sixteen-bit precision, seven at eight-bit, and about four at four-bit. Below four-bit the size keeps falling but quality drops sharply.</desc>
+<defs><marker id="ah-q" markerWidth="9" markerHeight="9" refX="8" refY="3.2" orient="auto"><path d="M0 0 L8 3.2 L0 6.4 z" fill="var(--text-muted)"></path></marker></defs>
+<rect class="box b1" x="20" y="60" width="180" height="58" rx="12"></rect>
+<rect class="box b2" x="250" y="60" width="180" height="58" rx="12"></rect>
+<rect class="box b3" x="480" y="60" width="180" height="58" rx="12"></rect>
+<rect class="off" x="710" y="60" width="170" height="58" rx="12"></rect>
+<path class="arw" d="M203 89 H246" marker-end="url(#ah-q)"></path>
+<path class="arw" d="M433 89 H476" marker-end="url(#ah-q)"></path>
+<path class="arw" d="M663 89 H706" marker-end="url(#ah-q)"></path>
+<text class="lbl" x="110" y="83">fp16</text>
+<text class="lbl mono" x="110" y="103">14 GB</text>
+<text class="lbl" x="340" y="83">int8</text>
+<text class="lbl mono" x="340" y="103">7 GB</text>
+<text class="lbl" x="570" y="83">Q4_K_M</text>
+<text class="lbl mono" x="570" y="103">4 GB</text>
+<text class="lbl off-lbl" x="795" y="83">Q2</text>
+<text class="lbl off-lbl mono" x="795" y="103">2.5 GB</text>
+<text class="cap" x="570" y="145">the usual stopping point</text>
+<text class="cap" x="450" y="167">below 4-bit the file keeps shrinking but the answers get worse faster than the savings help</text>
+</svg>
+
+<!-- ================= 6 ================= -->
+<h2 id="smallest">6 · Smallest working version</h2>
+<p>Install Ollama, pull one model, send one request. Three commands.</p>
+<pre><code># macOS / Linux
+curl -fsSL https://ollama.com/install.sh | sh
+
+ollama pull gemma2:2b        # ~1.6 GB, runs on almost anything
+ollama run gemma2:2b "Name three vector databases."
+</code></pre>
+<p>Now the same thing over HTTP, which is how your code will do it:</p>
+<pre><code>import requests
+
+r = requests.post("http://localhost:11434/api/generate", json={
+    "model": "gemma2:2b",
+    "prompt": "Name three vector databases.",
+    "stream": False,
+})
+print(r.json()["response"])
+</code></pre>
+<p><b>That endpoint is the whole product.</b> Everything else Ollama offers is a
+convenience around loading the right weights before this call arrives.</p>
+
+<!-- ================= 7 ================= -->
+<h2 id="components">7 · The components, one at a time</h2>
+
+<h4>1 · The model file</h4>
+<p>A single GGUF file holding the quantised weights, the tokenizer and the metadata.
+Portable — copy it to another machine and it runs.</p>
+<pre><code>ollama list
+ollama show gemma2:2b --modelfile
+</code></pre>
+
+<h4>2 · Tags and sizes</h4>
+<p>The part after the colon selects size and quantisation. No tag means the default, which
+is usually Q4_K_M.</p>
+<pre><code>ollama pull llama3.1:8b            # default quantisation
+ollama pull llama3.1:8b-instruct-q8_0
+</code></pre>
+
+<h4>3 · Base versus instruct</h4>
+<p>A base model continues text. An instruct model has been fine-tuned to follow
+instructions — module 01's section 3. <b>Pulling a base model and wondering why it does not
+answer questions is the most common first mistake here.</b></p>
+
+<h4>4 · The server</h4>
+<p>Ollama runs as a background service on port 11434. It loads a model on first use and
+evicts it after roughly five idle minutes, so the first request after a pause is slow.</p>
+<pre><code>curl http://localhost:11434/api/tags        # what is downloaded
+curl http://localhost:11434/api/ps          # what is loaded right now
+</code></pre>
+
+<h4>5 · Context length</h4>
+<p>Set per request with <code>num_ctx</code>. It is capped by the model, and raising it
+raises KV cache memory in direct proportion.</p>
+<pre><code>{"model": "llama3.1:8b", "prompt": "...", "options": {"num_ctx": 8192}}
+</code></pre>
+
+<h4>6 · Sampling options</h4>
+<p>The same controls as module 01, under <code>options</code>.</p>
+<pre><code>{"options": {"temperature": 0, "top_p": 0.9, "num_predict": 256, "seed": 42}}
+</code></pre>
+<p><code>temperature: 0</code> plus a fixed <code>seed</code> is how you get repeatable
+output for a test suite.</p>
+
+<h4>7 · Streaming</h4>
+<p>Leave <code>stream</code> true and the endpoint returns newline-delimited JSON, one
+object per token.</p>
+<pre><code>import json, requests
+
+with requests.post("http://localhost:11434/api/generate",
+                   json={"model": "gemma2:2b", "prompt": "Count to five."},
+                   stream=True) as r:
+    for line in r.iter_lines():
+        if line:
+            print(json.loads(line).get("response", ""), end="", flush=True)
+</code></pre>
+
+<h4>8 · The OpenAI-compatible endpoint</h4>
+<p>Ollama also serves the OpenAI chat schema, so LangChain and most other libraries work
+unchanged against a local model.</p>
+<pre><code>from langchain_openai import ChatOpenAI
+
+model = ChatOpenAI(model="gemma2:2b",
+                   base_url="http://localhost:11434/v1",
+                   api_key="ollama")          # ignored, but required
+</code></pre>
+<p><b>This one line is why the rest of this course never needs an API key.</b></p>
+
+<h4>9 · Modelfile</h4>
+<p>A small text file that pins a system prompt and sampling defaults into a named model,
+so callers cannot forget them.</p>
+<pre><code>FROM llama3.1:8b
+PARAMETER temperature 0
+PARAMETER num_ctx 8192
+SYSTEM "You answer in at most three sentences. If unsure, say so."
+</code></pre>
+<pre><code>ollama create triage -f Modelfile
+ollama run triage "Card declined twice."
+</code></pre>
+
+<h4>10 · Embedding models</h4>
+<p>Smaller models that return a vector instead of text. Needed from module 04 onward, and
+they run comfortably on a CPU.</p>
+<pre><code>ollama pull nomic-embed-text
+</code></pre>
+
+<!-- ================= 8 ================= -->
+<h2 id="state">8 · State and data flow</h2>
+<div class="table-wrap">
+<table>
+<tbody>
+<tr><th>1 · What data is state?</th><td>The loaded weights, and the KV cache for each in-flight request.</td></tr>
+<tr><th>2 · Who writes it?</th><td>The server, on load and during generation.</td></tr>
+<tr><th>3 · Who reads it?</th><td>The forward pass, for that request only.</td></tr>
+<tr><th>4 · Replaced, appended or merged?</th><td>Weights are read-only. The KV cache is appended per token.</td></tr>
+<tr><th>5 · What controls merging?</th><td>Nothing. There is no shared state between requests.</td></tr>
+<tr><th>6 · Only in memory?</th><td>Weights come from disk and are memory-mapped. The cache is memory only.</td></tr>
+<tr><th>7 · Cached?</th><td>The model stays resident for about five idle minutes, then is evicted.</td></tr>
+<tr><th>8 · In a database?</th><td>No. Conversation history is your application's job.</td></tr>
+<tr><th>9 · How long does it survive?</th><td>KV cache: one request. Weights: until eviction or restart.</td></tr>
+<tr><th>10 · What key retrieves it again?</th><td>The model tag. There is no session id at this layer.</td></tr>
+</tbody>
+</table>
+</div>
+<p><b>The server is stateless between requests.</b> If a local chatbot appears to remember,
+it is because your code re-sent the messages — exactly as with a hosted API.</p>
+
+<!-- ================= 9 ================= -->
+<h2 id="assembly">9 · Full code, in assembly order</h2>
+<pre><code># 1 · imports
+import json
+import requests
+
+BASE = "http://localhost:11434"
+
+# 2 · check the server is up and the model is present
+def ensure(model):
+    tags = requests.get(f"{BASE}/api/tags", timeout=5).json()
+    have = {m["name"].split(":")[0] for m in tags.get("models", [])}
+    if model.split(":")[0] not in have:
+        raise RuntimeError(f"run: ollama pull {model}")
+
+# 3 · one non-streaming call, with the options set explicitly
+def ask(model, prompt, ctx=4096):
+    r = requests.post(f"{BASE}/api/generate", timeout=120, json={
+        "model": model,
+        "prompt": prompt,
+        "stream": False,
+        "options": {"temperature": 0, "seed": 42, "num_ctx": ctx},
+    })
+    r.raise_for_status()
+    return r.json()
+
+# 4 · run it and read the numbers, not just the text
+ensure("gemma2:2b")
+out = ask("gemma2:2b", "Name three vector databases.")
+
+print(out["response"])
+print("prompt tokens :", out["prompt_eval_count"])
+print("output tokens :", out["eval_count"])
+print("tokens/sec    : %.1f" % (out["eval_count"] / (out["eval_duration"] / 1e9)))
+</code></pre>
+<p>Step 4 is the part people skip. <b>Ollama returns token counts and timings on every
+call, which is the only honest way to compare a local model against a hosted one.</b></p>
+
+<!-- ================= 10 ================= -->
+<h2 id="trace">10 · Trace</h2>
+<p>What happens on a first request after a restart, versus the second one.</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Step</th><th>First request</th><th>Second request</th></tr></thead>
+<tbody>
+<tr><td>Server receives the call</td><td>1 ms</td><td>1 ms</td></tr>
+<tr><td>Model resident?</td><td>No — read GGUF from disk, map into memory</td><td>Yes</td></tr>
+<tr><td>Load time</td><td><b>2–20 s</b>, depending on size and disk</td><td>0 s</td></tr>
+<tr><td>Prefill (read the prompt)</td><td>~120 ms for 300 tokens</td><td>~120 ms</td></tr>
+<tr><td>Decode</td><td>~35 tokens/sec</td><td>~35 tokens/sec</td></tr>
+<tr><td>Total for a 200-token answer</td><td><b>~11 s</b></td><td><b>~6 s</b></td></tr>
+</tbody>
+</table>
+</div>
+<p>The two are identical apart from the load. <b>A "slow model" complaint is very often
+just cold-start after the five-minute eviction</b> — check <code>/api/ps</code> before
+tuning anything else.</p>
+
+<!-- ================= 11 ================= -->
+<h2 id="break">11 · Break it</h2>
+<p>Pull a model that does not fit, and it still runs. That is the problem.</p>
+<pre><code>ollama pull llama3.1:70b        # ~40 GB at Q4
+ollama run llama3.1:70b "hello"
+</code></pre>
+<p>On a 12&nbsp;GB card there is no error. Ollama places as many layers on the GPU as fit
+and runs the rest on the CPU, so the model answers — at about 1.5 tokens per second
+instead of 40. A 200-token reply takes over two minutes.</p>
+
+<svg class="bd-svg" viewBox="0 0 900 175" role="img" aria-labelledby="off-t off-d">
+<title id="off-t">Partial GPU offload</title>
+<desc id="off-d">The model is larger than GPU memory, so some layers are placed on the GPU and the rest on the CPU. The request still succeeds, but every token must cross between them, which makes generation many times slower.</desc>
+<defs><marker id="ah-of" markerWidth="9" markerHeight="9" refX="8" refY="3.2" orient="auto"><path d="M0 0 L8 3.2 L0 6.4 z" fill="var(--text-muted)"></path></marker></defs>
+<rect class="box b1" x="20" y="62" width="170" height="56" rx="12"></rect>
+<rect class="box b2" x="250" y="62" width="190" height="56" rx="12"></rect>
+<rect class="box fail" x="500" y="62" width="190" height="56" rx="12"></rect>
+<rect class="box after b5" x="750" y="62" width="130" height="56" rx="12"></rect>
+<path class="arw" d="M193 90 H246" marker-end="url(#ah-of)"></path>
+<path class="arw" d="M443 90 H496" marker-end="url(#ah-of)"></path>
+<path class="arw" d="M693 90 H746" marker-end="url(#ah-of)"></path>
+<text class="lbl" x="105" y="84">40 GB model</text>
+<text class="lbl mono" x="105" y="102">12 GB GPU</text>
+<text class="lbl" x="345" y="84">18 layers</text>
+<text class="lbl" x="345" y="102">on GPU</text>
+<text class="lbl" x="595" y="84">62 layers</text>
+<text class="lbl" x="595" y="102">on CPU</text>
+<text class="lbl" x="815" y="84">1.5 tok/s</text>
+<text class="lbl" x="815" y="102">no error</text>
+<path class="xmark" d="M577 130 L613 156 M613 130 L577 156"></path>
+<text class="cap" x="450" y="170">it works, so nothing tells you the model was the wrong size</text>
+</svg>
+
+<p>The second silent failure is quality. Pull the same model at Q2 and it answers fast and
+confidently, with more of the answers wrong. <b>Nothing in the output says which
+quantisation produced it.</b></p>
+
+<!-- ================= 12 ================= -->
+<h2 id="fix">12 · Fix it</h2>
+<p>Do the arithmetic before pulling, and check the placement after loading:</p>
+<pre><code>def will_it_fit(params_b, bytes_per_param, context, layers, kv_heads, head_dim, vram_gb):
+    weights = params_b * bytes_per_param
+    kv = 2 * layers * kv_heads * head_dim * context * 2 / 1e9
+    total = weights + kv + 1.0                      # 1 GB overhead
+    return total, total &lt;= vram_gb * 0.9            # keep 10% headroom
+
+print(will_it_fit(7, 0.55, 4096, 32, 8, 128, vram_gb=8))
+# (5.6, True)
+print(will_it_fit(70, 0.55, 4096, 80, 8, 128, vram_gb=12))
+# (40.2, False)
+</code></pre>
+<p>Then confirm what actually happened, rather than trusting that it fitted:</p>
+<pre><code>ollama ps
+# NAME             SIZE      PROCESSOR
+# llama3.1:8b      6.1 GB    100% GPU        <- good
+# llama3.1:70b     41 GB     71%/29% CPU/GPU <- the slow case above
+</code></pre>
+<p><b>The <code>PROCESSOR</code> column is the single most useful diagnostic on this
+page.</b> Anything other than 100% GPU explains a slow model completely.</p>
+
+<!-- ================= 13 ================= -->
+<h2 id="production">13 · Production version</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Concern</th><th>What you do</th></tr></thead>
+<tbody>
+<tr><td>Serving engine</td><td>Ollama for one user and for development. <b>vLLM or TGI</b> for concurrency — continuous batching is the difference between 1 and 50 users on one GPU</td></tr>
+<tr><td>Model pinning</td><td>Pin the tag including quantisation. <code>llama3.1:8b</code> can be re-tagged upstream</td></tr>
+<tr><td>Warm start</td><td>Set <code>OLLAMA_KEEP_ALIVE=-1</code> or send a heartbeat, so no user pays the cold-load cost</td></tr>
+<tr><td>Memory headroom</td><td>Plan to 90% of VRAM. Fragmentation and a display connected to the same card are real</td></tr>
+<tr><td>Concurrency</td><td><code>OLLAMA_NUM_PARALLEL</code>. Each concurrent request needs its own KV cache</td></tr>
+<tr><td>Timeouts</td><td>Set against tokens per second at your worst quantisation, not the best case</td></tr>
+<tr><td>Quality gate</td><td>Run your eval set at each quantisation before choosing. The 4-bit answer is not free</td></tr>
+<tr><td>Cost comparison</td><td>GPU hours plus power against per-token pricing. Below roughly a million tokens a day, hosted usually wins</td></tr>
+<tr><td>Fallback</td><td>Route to a hosted model when the local one is loading, overloaded or below a confidence threshold</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ================= 14 ================= -->
+<h2 id="comparison">14 · Comparison</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th></th><th>Ollama</th><th>vLLM</th><th>llama.cpp</th><th>Hosted API</th></tr></thead>
+<tbody>
+<tr><th>Built for</th><td>One user, easy setup</td><td>Many concurrent users</td><td>Maximum portability</td><td>Anything, metered</td></tr>
+<tr><th>Quantisation</th><td>GGUF, built in</td><td>AWQ/GPTQ, fp16 default</td><td>GGUF, the reference</td><td>Not your concern</td></tr>
+<tr><th>Batching</th><td>Limited</td><td>Continuous</td><td>Limited</td><td>Continuous, shared</td></tr>
+<tr><th>CPU offload</th><td>Yes, automatic</td><td>No</td><td>Yes</td><td>N/A</td></tr>
+<tr><th>Setup effort</th><td>One command</td><td>Real deployment work</td><td>Compile it yourself</td><td>An API key</td></tr>
+<tr><th>Use it for</th><td>This course, development, single-user tools</td><td>Production self-hosting</td><td>Embedded and edge</td><td>Strongest models, spiky traffic</td></tr>
+</tbody>
+</table>
+</div>
+<p>The honest path is usually both: <b>develop against Ollama so nothing costs money and
+nothing leaves the machine, then decide per workload whether it ships local or hosted.</b>
+The OpenAI-compatible endpoint in section 7 means that decision is a base URL, not a
+rewrite.</p>
+
+<div class="carry"><b>Carried over</b> from the previous version of this page, unchanged.</div>
+<h2 id="interview">15 &middot; Interview preparation</h2>
+<details class="collapse"><summary><span class="pill green">Beginner</span>  Why run an LLM locally instead of calling an API? <span class="chev">›</span></summary>
+<div class="collapse-body"><p>Data privacy (nothing leaves your network), no per-token cost, offline/edge capability, predictable latency, and full version control. The trade-off is that you own the hardware, ops, and scaling, and open models may lag frontier quality on the hardest tasks.</p></div></details>
+<details class="collapse"><summary><span class="pill green">Beginner</span>  What is quantization and what does it cost you? <span class="chev">›</span></summary>
+<div class="collapse-body"><p>Storing model weights at lower precision (e.g. 4-bit instead of 16-bit), shrinking memory ~3–4× and speeding inference. The cost is a small, usually acceptable accuracy loss; aggressive quants (Q3 and below) degrade quality more noticeably. Q4_K_M is the common sweet spot.</p></div></details>
+<details class="collapse"><summary><span class="pill blue">Intermediate</span>  Estimate the VRAM to run a 13B model at Q4. <span class="chev">›</span></summary>
+<div class="collapse-body"><p>~4.5 bits × 13B / 8 ≈ 7.3 GB of weights, ×1.2 for KV cache + activations ≈ <strong>~9 GB</strong> at modest context. A 12 GB GPU runs it comfortably; an 8 GB GPU would need a smaller quant, shorter context, or partial CPU offload (slower).</p></div></details>
+<details class="collapse"><summary><span class="pill blue">Intermediate</span>  What's the difference between Ollama and vLLM? <span class="chev">›</span></summary>
+<div class="collapse-body"><p>Ollama optimizes for easy single-box/local use and developer experience. vLLM optimizes for high-throughput multi-user serving via continuous batching and paged KV cache. Use Ollama to prototype and for desktop/edge; graduate to vLLM/TGI for a production API serving many concurrent users.</p></div></details>
+<details class="collapse"><summary><span class="pill amber">Senior</span>  A hospital wants private RAG over patient records. Walk through your local deployment. <span class="chev">›</span></summary>
+<div class="collapse-body"><p>All compute on-prem/in-VPC; nothing leaves the network. Run a local instruct model (e.g. Qwen2.5/Llama3.x, Q4–Q8 by GPU budget) via vLLM for concurrency, plus a local embedding model. Vector DB on-prem (pgvector/Qdrant). Add a gateway for auth, audit logging, and PII guardrails; pin model + prompt versions; build an eval set of clinical Q&amp;A to gate releases. Document hardware sizing from the VRAM math and plan capacity for peak concurrency. Privacy and auditability are the design center, not latency.</p></div></details>
+<details class="collapse"><summary><span class="pill purple">Staff · design</span>  Design a hybrid local+hosted model router to cut cost 70% without hurting quality. <span class="chev">›</span></summary>
+<div class="collapse-body"><p>Classify each request by difficulty (heuristics + a tiny classifier or the local model's self-assessed confidence). Route easy/high-volume tasks (formatting, extraction, simple Q&amp;A) to a local Q4 model; escalate hard/ambiguous tasks (complex reasoning, long context) to a hosted frontier model. Add a confidence/verification gate: if the local output fails a validator (schema, faithfulness, low logprob), retry on hosted. Track per-route quality with evals and per-route cost; tune the threshold to hit the cost target while keeping quality SLO. Cache identical requests. This routing layer lives in the orchestration tier from Module 01's gateway design.</p></div></details>
+
+<!-- ================= 16 ================= -->
+<h2 id="short">16 · In short, and what comes next</h2>
+<p class="bd-choose">Remember these five:</p>
+<ul>
+<li>Memory is weights plus KV cache plus about 1 GB. Do the sum before pulling.</li>
+<li>Q4_K_M is the usual stopping point: a 7B model in roughly 4 GB.</li>
+<li>A model that does not fit still runs, on the CPU, very slowly. Check
+<code>ollama ps</code>.</li>
+<li>Base models complete text; instruct models follow instructions.</li>
+<li>The OpenAI-compatible endpoint means local and hosted differ by a base URL.</li>
+</ul>
+<div class="callout key">
+<div class="c-ico">🔑</div>
+<div class="c-body"><div class="c-title">The one idea to remember</div>
+<p><b>Local serving trades a hard memory ceiling for no per-token cost and no data
+leaving the machine.</b> Everything else on this page — quantisation, offload, context
+length, eviction — is a consequence of that ceiling.</p></div>
+</div>
+<p><b>Next:</b> the Hermes deep dive runs an open model properly, tests its tool calling,
+and covers the operational trade-offs of choosing one. After that, phase 2 starts with
+embeddings — and the embedding model you pulled in section 7 is what it uses.</p>
+
+<div class="page-nav" data-page-nav>
+<a href="02_transformers.html"><div class="dir">← Previous</div><div class="ttl">02 · Transformers Deep Dive</div></a>
+<a class="next" href="04_embeddings.html"><div class="dir">Next →</div><div class="ttl">04 · Embeddings</div></a>
+</div>
+
+</main>
+<div class="toc-rail"><nav class="toc"></nav></div>
+</div>
+</div>
+</div>
+<script src="../assets/app.js?v=20260731b"></script>
+<script src="../assets/sitenav.js?v=20260804b"></script>
+<script src="../assets/enhance.js?v=20260804a"></script>
+<script src="../assets/genai-motion.js?v=20260728a"></script>
+<script src="../assets/glossary.js?v=20260802b"></script>
+</body>
+</html>

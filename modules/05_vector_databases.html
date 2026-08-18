@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+
+<html data-theme="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#f4f5f8" name="theme-color"/>
+<title>05 · Vector Databases — GenAI Mastery</title>
+<!-- Interview Preparation brand metadata -->
+<link href="../assets/brand/favicon.svg?v=20260727c" rel="icon" type="image/svg+xml"/>
+<link href="../assets/brand/favicon-32.png?v=20260727c" rel="icon" sizes="32x32" type="image/png"/>
+<link href="../assets/brand/favicon.ico?v=20260727c" rel="shortcut icon"/>
+<link href="../assets/brand/apple-touch-icon.png?v=20260727c" rel="apple-touch-icon" sizes="180x180"/>
+<link href="../assets/brand/site.webmanifest?v=20260727c" rel="manifest"/>
+<link color="#6f47f5" href="../assets/brand/safari-pinned-tab.svg?v=20260727c" rel="mask-icon"/>
+<link href="../assets/brand/social-card.png?v=20260727c" rel="image_src"/>
+<meta content="Switch job" name="application-name"/>
+<meta content="Switch job" name="apple-mobile-web-app-title"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="yes" name="mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="#2563eb" name="msapplication-TileColor"/>
+<meta content="../assets/brand/browserconfig.xml?v=20260727c" name="msapplication-config"/>
+<meta content="website" property="og:type"/>
+<meta content="Switch job Learning Platform" property="og:site_name"/>
+<meta content="05 · Vector Databases — GenAI Mastery" property="og:title"/>
+<meta content="Store and search millions of vectors fast: exact vs approximate nearest neighbor, HNSW and IVF indexes, recall/latency tradeoffs, metadata filtering, and choosing between FAISS, Qdrant, pgvector and ElasticSearch." property="og:description"/>
+<meta content="../assets/brand/social-card.png?v=20260727c" property="og:image"/>
+<meta content="1200" property="og:image:width"/>
+<meta content="630" property="og:image:height"/>
+<meta content="Switch job learning platform logo" property="og:image:alt"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="05 · Vector Databases — GenAI Mastery" name="twitter:title"/>
+<meta content="Store and search millions of vectors fast: exact vs approximate nearest neighbor, HNSW and IVF indexes, recall/latency tradeoffs, metadata filtering, and choosing between FAISS, Qdrant, pgvector and ElasticSearch." name="twitter:description"/>
+<meta content="../assets/brand/social-card.png?v=20260727c" name="twitter:image"/>
+<link href="../assets/brand/favicon-16.png?v=20260727c" rel="icon" sizes="16x16" type="image/png"/>
+<!-- /Interview Preparation brand metadata -->
+<meta content="Store and search millions of vectors fast: exact vs approximate nearest neighbor, HNSW and IVF indexes, recall/latency tradeoffs, metadata filtering, and choosing between FAISS, Qdrant, pgvector and ElasticSearch." name="description"/>
+<!-- Theme before first paint. Without this the document paints with the light
+     tokens and only flips when app.js runs at the end of <body>, which is a
+     white flash on every navigation in dark mode. Mirrors app.js's getTheme()
+     exactly — same key, same "light" default — so the pre-paint value can never
+     disagree with what the scripts apply a moment later. Inline and blocking on
+     purpose: an external file would cost a round trip before first paint. -->
+<script>(function(){try{var d=document.documentElement;var t=localStorage.getItem("gp.theme")||"light";d.setAttribute("data-theme",t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="dark"?"#17191e":"#f3f4f6";/* Reading size and width, same reason as the theme: applying them after first paint reflows the whole lesson. Contract shared with enhance.js: key "gp.reading", {"size","width"}; unknown size -> "s" on phones and "xs" above 860px, unknown width -> "wide", unknown align -> "left". */var r={};try{r=JSON.parse(localStorage.getItem("gp.reading"))||{};}catch(e2){}var mob=!!(window.matchMedia&&window.matchMedia("(max-width:860px)").matches);var sz=["xs","s","m","l","xl"].indexOf(r.size)>=0?r.size:(mob?"s":"xs");var wd=["default","wide","full"].indexOf(r.width)>=0?r.width:"wide";var al=r.align==="justify"?"justify":"left";d.setAttribute("data-reading-size",sz);d.setAttribute("data-reading-width",wd);d.setAttribute("data-reading-align",al);/* Page transitions. `PageRevealEvent` is the only honest test for a CROSS-document view transition — CSS @supports(view-transition-name) answers yes on browsers that only do the same-document kind, which is what silently disabled the fallback and left them with a hard cut. Pre-paint for the same reason as the theme: gating this from a body script lets the arrival animation start and then cancels it, which is the flash it removes. */if("PageRevealEvent" in window){d.classList.add("xvt");window.addEventListener("pagereveal",function(ev){if(!ev.viewTransition)return;d.classList.add("vt-in");var off=function(){d.classList.remove("vt-in")};ev.viewTransition.finished.then(off,off);});}}catch(e){}})();</script>
+<link href="../assets/styles.css?v=20260805a" rel="stylesheet"/>
+<link href="../assets/office-theme.css?v=20260805c" rel="stylesheet"/>
+<link href="../assets/genai-motion.css?v=20260804c" rel="stylesheet"/>
+<link href="../assets/glossary.css?v=20260802b" rel="stylesheet"/>
+<!-- Release 2 runtime. The manifest loads first, the renderer second; classic
+     deferred scripts execute in document order after parsing, so the nav slot
+     exists and the manifest is defined before the renderer runs. The authored
+     links inside [data-page-nav] stay in the source and are replaced only after
+     page, route and fragment have all resolved. -->
+<script defer src="../assets/curriculum.js?v=20260804c"></script>
+<script defer src="../assets/page-nav.js?v=20260804c"></script>
+</head>
+<body data-curriculum-id="vector-databases" data-page="05">
+<div class="app">
+<aside class="sidebar">
+<div class="brand">
+<a class="brand-link" href="../index.html" aria-label="Switch job home">
+<span class="brand-mark" aria-hidden="true"><img src="../assets/brand/switch-job-logo.png?v=20260727c" alt=""/></span>
+<div class="brand-text"><strong>Switch job</strong><span>Learning Platform</span></div>
+</a>
+</div>
+<div class="search-wrap">
+<div class="search-box">
+<svg fill="none" height="15" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="15"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+<input data-search="" placeholder="Search modules…  ( / )" type="text"/>
+</div>
+<div class="search-results"></div>
+</div>
+<nav class="nav"></nav>
+</aside>
+<div class="backdrop"></div>
+<div class="main">
+<header class="topbar">
+<button aria-label="Menu" class="icon-btn menu-btn">
+<svg fill="none" height="18" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="18"><path d="M3 12h18M3 6h18M3 18h18"></path></svg>
+</button>
+<div class="crumbs">Retrieval / <b>05 · Vector Databases</b></div>
+<button aria-label="Toggle theme" class="icon-btn" data-theme-toggle=""></button>
+</header>
+<div class="content-wrap">
+<main class="content">
+
+<div class="eyebrow"><span class="dot"></span> Module 05 · Retrieval track</div>
+<h1>Vector databases</h1>
+<p class="lead">Module 04 ended with a NumPy scan over every vector. That is correct, and
+it stops being fast at about a million rows. A vector database replaces the scan with an
+index that checks a few thousand candidates instead of all of them — and accepts being
+occasionally wrong in exchange.</p>
+<div class="meta-row">
+<span class="pill blue">⏱ Study + practice · 9–14 h</span>
+<span class="pill">Difficulty · Intermediate</span>
+<span class="pill purple">Prereq · Module 04</span>
+</div>
+
+<!-- ================= 1 ================= -->
+<h2 id="known">1 · What you already know</h2>
+<p>From module 04: chunks become normalised vectors, and a query vector is compared against
+all of them with one matrix multiply. You measured it — about 8 ms for ten thousand
+vectors.</p>
+<p>You also know that something is always nearest, so a score floor is compulsory.</p>
+<p><b>This page is about what happens to that matrix multiply when there are ten million
+vectors instead of ten thousand.</b></p>
+
+<!-- ================= 2 ================= -->
+<h2 id="breaks">2 · What breaks now</h2>
+<p>The scan is linear in the number of vectors, so the cost scales exactly with the corpus:</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Vectors</th><th>Memory (768 dims, fp32)</th><th>One scan</th><th>At 50 queries/sec</th></tr></thead>
+<tbody>
+<tr><td>10,000</td><td>30 MB</td><td>8 ms</td><td>Fine</td></tr>
+<tr><td>1,000,000</td><td>3 GB</td><td>~800 ms</td><td>Already impossible</td></tr>
+<tr><td>10,000,000</td><td>30 GB</td><td>~8 s</td><td>Not on one machine</td></tr>
+</tbody>
+</table>
+</div>
+<p>And three requirements arrive at the same time as the scale:</p>
+<ul>
+<li><b>Filter first.</b> "Only documents this user's team can see" must restrict the search,
+not the results.</li>
+<li><b>Update in place.</b> A document changes; its old vectors must go without rebuilding
+everything.</li>
+<li><b>Survive a restart.</b> A 30 GB in-memory array rebuilt on every deploy is not a
+system.</li>
+</ul>
+<p><b>All four problems are solved by the same thing: an index that does not look at every
+vector, inside a database that persists and filters.</b></p>
+
+<!-- ================= 3 ================= -->
+<h2 id="breakdown">3 · Simple breakdown — vector database vs relational database</h2>
+
+<section class="breakdown">
+
+<h3 class="bd-tech"><span class="bd-tag">A</span> Vector database</h3>
+
+<h4>Basic level</h4>
+<p class="bd-item"><b class="no-jargon">What it is.</b> A vector database stores
+high-dimensional vectors with their metadata and returns the approximate nearest neighbours
+of a query vector, using an index such as HNSW or IVF.</p>
+<p class="bd-item"><b class="no-jargon">Core purpose.</b> It makes similarity search stay
+fast as the collection grows, by checking a small fraction of the vectors instead of all of
+them.</p>
+<p class="bd-item"><b class="no-jargon">Execution model.</b></p>
+
+<svg class="bd-svg" viewBox="0 0 900 130" role="img" aria-labelledby="vd-t vd-d">
+<title id="vd-t">Vector database search</title>
+<desc id="vd-d">A query vector arrives, metadata filters restrict which vectors are eligible, the approximate index walks a small number of candidates instead of the whole collection, the candidates are scored exactly, and the top results are returned with their stored text and metadata.</desc>
+<defs><marker id="ah-vd" markerWidth="9" markerHeight="9" refX="8" refY="3.2" orient="auto"><path d="M0 0 L8 3.2 L0 6.4 z" fill="var(--text-muted)"></path></marker></defs>
+<rect class="box b1" x="11" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b2" x="191" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b3" x="371" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b4" x="551" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b5" x="731" y="40" width="158" height="58" rx="12"></rect>
+<path class="arw" d="M172 69 H186" marker-end="url(#ah-vd)"></path>
+<path class="arw" d="M352 69 H366" marker-end="url(#ah-vd)"></path>
+<path class="arw" d="M532 69 H546" marker-end="url(#ah-vd)"></path>
+<path class="arw" d="M712 69 H726" marker-end="url(#ah-vd)"></path>
+<text class="lbl" x="90" y="65">query</text>
+<text class="lbl" x="90" y="83">vector</text>
+<text class="lbl" x="270" y="65">metadata filter</text>
+<text class="lbl" x="270" y="83">restricts search</text>
+<text class="lbl" x="450" y="65">index walks</text>
+<text class="lbl" x="450" y="83">~2k candidates</text>
+<text class="lbl" x="630" y="65">exact score</text>
+<text class="lbl" x="630" y="83">on those only</text>
+<text class="lbl" x="810" y="65">top k + text</text>
+<text class="lbl" x="810" y="83">+ metadata</text>
+<circle class="pkt" cx="90" cy="18" r="7"></circle>
+</svg>
+
+<h4>Intermediate level</h4>
+<p class="bd-item"><b class="no-jargon">Architecture under the hood.</b> The default index
+is <b>HNSW</b>, a layered graph. The top layer holds few nodes with long links; each layer
+below is denser. A search enters at the top, greedily walks toward the query, drops a layer
+and repeats, so it reaches the neighbourhood in a few hops instead of a full scan. Two
+parameters govern it: <code>M</code>, links per node, fixed at build time; and
+<code>ef_search</code>, how many candidates to keep during the walk, tunable per query.
+<b>IVF</b> is the alternative — cluster the vectors, search only the nearest clusters.</p>
+<p class="bd-item"><b class="no-jargon">State handling.</b> Vectors, metadata and the graph
+are persisted to disk and memory-mapped on start-up. Inserts update the graph incrementally.
+Deletes are usually <b>soft</b> — the node is marked as removed but stays in the graph until
+a compaction pass, so deleted vectors still cost memory and search time.</p>
+<p class="bd-item"><b class="no-jargon">Limitations and advanced features.</b> Results are
+<b>approximate</b>: the walk can miss a true neighbour, and how often is your recall.
+Building an HNSW index is slow and memory-hungry. Heavy filtering interacts badly with the
+graph, because a walk can dead-end in a region where nothing passes the filter. Advanced
+features are scalar and binary quantisation, hybrid search with BM25, multi-tenancy by
+partition, and replication.</p>
+
+<h3 class="bd-tech"><span class="bd-tag">B</span> Relational database</h3>
+
+<h4>Basic level</h4>
+<p class="bd-item"><b class="no-jargon">What it is.</b> A relational database stores rows in
+typed tables and answers queries with exact predicates, using B-tree and hash indexes to
+avoid scanning every row.</p>
+<p class="bd-item"><b class="no-jargon">Core purpose.</b> It returns exactly the rows that
+match a condition, with transactional guarantees about what is stored.</p>
+<p class="bd-item"><b class="no-jargon">Execution model.</b></p>
+
+<svg class="bd-svg" viewBox="0 0 900 130" role="img" aria-labelledby="rd-t rd-d">
+<title id="rd-t">Relational query execution</title>
+<desc id="rd-d">A query is parsed, the planner chooses an index, the B-tree is descended to the matching key range, matching rows are fetched, and the exact result set is returned. The same query always returns the same rows.</desc>
+<defs><marker id="ah-rd" markerWidth="9" markerHeight="9" refX="8" refY="3.2" orient="auto"><path d="M0 0 L8 3.2 L0 6.4 z" fill="var(--text-muted)"></path></marker></defs>
+<rect class="box b1" x="11" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b2" x="191" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b3" x="371" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b4" x="551" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b5" x="731" y="40" width="158" height="58" rx="12"></rect>
+<path class="arw" d="M172 69 H186" marker-end="url(#ah-rd)"></path>
+<path class="arw" d="M352 69 H366" marker-end="url(#ah-rd)"></path>
+<path class="arw" d="M532 69 H546" marker-end="url(#ah-rd)"></path>
+<path class="arw" d="M712 69 H726" marker-end="url(#ah-rd)"></path>
+<text class="lbl" x="90" y="74">SQL query</text>
+<text class="lbl" x="270" y="65">planner picks</text>
+<text class="lbl" x="270" y="83">an index</text>
+<text class="lbl" x="450" y="65">descend the</text>
+<text class="lbl" x="450" y="83">B-tree</text>
+<text class="lbl" x="630" y="65">fetch matching</text>
+<text class="lbl" x="630" y="83">rows</text>
+<text class="lbl" x="810" y="65">exact result,</text>
+<text class="lbl" x="810" y="83">same every time</text>
+<circle class="pkt" cx="90" cy="18" r="7"></circle>
+</svg>
+
+<h4>Intermediate level</h4>
+<p class="bd-item"><b class="no-jargon">Architecture under the hood.</b> A B-tree keeps keys
+sorted, so a lookup descends a shallow tree and a range scan walks the leaves. This works
+because one dimension has a total order. In 768 dimensions there is no such order — the tree
+degenerates and a B-tree over vectors is no better than a scan. That single fact is why a
+different index exists.</p>
+<p class="bd-item"><b class="no-jargon">State handling.</b> Rows persist with ACID
+guarantees. A committed write is durable and visible to the next reader, and a transaction
+either applies completely or not at all.</p>
+<p class="bd-item"><b class="no-jargon">Limitations and advanced features.</b> No native
+notion of "similar" for high-dimensional data. <b>pgvector</b> closes most of the gap by
+adding vector columns and HNSW or IVFFlat indexes to Postgres, which lets one database hold
+rows, metadata and vectors together — usually the right first choice.</p>
+
+<h3 class="bd-diff">The core differences</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th></th><th>Vector database</th><th>Relational database</th></tr></thead>
+<tbody>
+<tr><th>Workflow design</th>
+<td>Ask for the k nearest vectors and get a ranked, approximate list. Tuning trades recall against latency.</td>
+<td>Ask for rows matching a predicate and get all of them, exactly. There is nothing to trade.</td></tr>
+<tr><th>Error recovery</th>
+<td>A missed neighbour raises nothing — it is silently absent from the results. Only measuring recall against exact search reveals it.</td>
+<td>A wrong result is a bug in the query, and the same query always returns the same rows, so it is reproducible.</td></tr>
+<tr><th>Architectural paradigm</th>
+<td>Approximate nearest-neighbour search over a graph or clustering.</td>
+<td>Exact set retrieval over an ordered index.</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="bd-short">In short — which one to choose</h3>
+<p class="bd-choose">Use a dedicated vector database when:</p>
+<ul>
+<li>You are past roughly ten million vectors, or need very high query throughput.</li>
+<li>Vector search is the product and you need its tuning knobs exposed.</li>
+<li>You need built-in hybrid search and reranking.</li>
+</ul>
+<p class="bd-choose">Use pgvector in your existing Postgres when:</p>
+<ul>
+<li>You are below a few million vectors, which is most systems.</li>
+<li>The vectors belong next to rows you already store, and you want one backup story.</li>
+<li>You would rather not operate another database. <b>This is the right default.</b></li>
+</ul>
+<p class="bd-choose bd-avoid">Use neither when:</p>
+<ul>
+<li>You have fewer than 50,000 vectors. NumPy in memory is exact, faster to reason about,
+and has no recall to worry about.</li>
+<li>You have not yet measured whether retrieval is your bottleneck.</li>
+</ul>
+</section>
+
+<!-- ================= 4 ================= -->
+<h2 id="without">4 · Without the technology</h2>
+<p>The module 04 search, with the two things a database adds bolted on by hand:</p>
+<pre><code>import numpy as np
+
+def search(query_vec, matrix, metas, team, k=4):
+    allowed = np.array([i for i, m in enumerate(metas) if m["team"] == team])
+    scores = matrix[allowed] @ query_vec          # scan the allowed subset
+    top = allowed[np.argsort(-scores)[:k]]
+    return [(float(scores[j]), metas[i]) for j, i in enumerate(top)]
+</code></pre>
+<p>This is correct — it is exact search with a filter. It also, at ten million vectors,
+allocates a copy of the allowed subset and scans it, so a query is seconds and memory
+doubles.</p>
+<p>Add persistence, incremental updates and concurrent access and you have written a
+database. <b>The interesting part is not the storage; it is that the scan itself has to
+go.</b></p>
+
+<!-- ================= 5 ================= -->
+<h2 id="mechanics">5 · Runtime mechanics</h2>
+<p>How an HNSW search avoids the scan. Seven steps.</p>
+<ol>
+<li>At build time each vector becomes a node, linked to roughly <code>M</code> near
+neighbours.</li>
+<li>Nodes are assigned to layers at random with exponentially decreasing probability, so the
+top layer holds a handful of nodes and the bottom holds all of them.</li>
+<li>A search starts at a fixed entry point in the top layer.</li>
+<li>It moves greedily to whichever neighbour is closer to the query, until no neighbour
+improves.</li>
+<li>It drops to the next layer down and repeats from that node.</li>
+<li>At the bottom layer it keeps a candidate list of size <code>ef_search</code>, exploring
+neighbours until the list stops improving.</li>
+<li>The best <code>k</code> candidates are scored exactly and returned.</li>
+</ol>
+<p>The walk touches on the order of <code>ef_search × M</code> nodes — a few thousand —
+whatever the collection size. <b>That is the whole trick, and step 4 is where it can go
+wrong: a greedy walk can settle in the wrong region and never find the true nearest
+neighbour.</b></p>
+
+<!-- ================= 6 ================= -->
+<h2 id="smallest">6 · Smallest working version</h2>
+<pre><code>pip install qdrant-client
+</code></pre>
+<pre><code>from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, PointStruct, VectorParams
+
+client = QdrantClient(":memory:")          # swap for url="http://localhost:6333"
+
+client.create_collection(
+    collection_name="docs",
+    vectors_config=VectorParams(size=768, distance=Distance.COSINE),
+)
+
+client.upsert("docs", points=[
+    PointStruct(id=1, vector=embed("Refunds are accepted within 30 days."),
+                payload={"text": "Refunds are accepted within 30 days.", "team": "support"}),
+    PointStruct(id=2, vector=embed("The office is open 9am to 6pm."),
+                payload={"text": "The office is open 9am to 6pm.", "team": "hr"}),
+])
+
+for hit in client.query_points("docs", query=embed("how long to return an item?"),
+                               limit=2).points:
+    print(round(hit.score, 3), hit.payload["text"][:44])
+</code></pre>
+<pre><code># 0.681 Refunds are accepted within 30 days.
+# 0.402 The office is open 9am to 6pm.
+</code></pre>
+<p>Same scores as module 04's NumPy version, because at two vectors the index searches
+everything. <b>The difference only appears at scale — and so does the approximation.</b></p>
+
+<!-- ================= 7 ================= -->
+<h2 id="components">7 · The components, one at a time</h2>
+
+<h3>Storing</h3>
+
+<h4>1 · Collection</h4>
+<p>A named set of vectors that all share one dimension and one distance metric. Both are
+fixed at creation — changing either means a new collection.</p>
+<pre><code>client.create_collection("docs",
+    vectors_config=VectorParams(size=768, distance=Distance.COSINE))
+</code></pre>
+
+<h4>2 · Point</h4>
+<p>One id, one vector, one payload. <b>The payload is where the text and the metadata live</b>
+— without it a search returns ids you cannot use.</p>
+<pre><code>PointStruct(id=1, vector=[...], payload={"text": "...", "team": "support",
+                                         "doc_id": "policy.pdf", "updated": "2026-08"})
+</code></pre>
+
+<h4>3 · Distance metric</h4>
+<p>Cosine for normalised text embeddings; dot product is equivalent and faster on normalised
+vectors; Euclidean is rarely right for text. <b>It must match what the embedding model was
+trained for.</b></p>
+
+<h4>4 · Upsert and delete</h4>
+<p>Upsert by id replaces. Deleting by a payload filter is how you remove a whole document's
+chunks.</p>
+<pre><code>client.delete("docs", points_selector=Filter(
+    must=[FieldCondition(key="doc_id", match=MatchValue(value="policy.pdf"))]))
+</code></pre>
+
+<h3>Searching</h3>
+
+<h4>5 · HNSW parameters</h4>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Parameter</th><th>When it applies</th><th>Raising it</th></tr></thead>
+<tbody>
+<tr><td><code>m</code></td><td>Build</td><td>Better recall, more memory, slower build</td></tr>
+<tr><td><code>ef_construct</code></td><td>Build</td><td>Better graph quality, much slower build</td></tr>
+<tr><td><code>ef_search</code> / <code>hnsw_ef</code></td><td><b>Query</b></td><td>Better recall, slower query. Tune this one first</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code>client.query_points("docs", query=qvec, limit=4,
+                    search_params=SearchParams(hnsw_ef=128))
+</code></pre>
+
+<h4>6 · Recall</h4>
+<p>The fraction of true nearest neighbours the approximate search actually returned. It is
+the number this whole page trades against latency, and <b>nothing reports it unless you
+measure it.</b></p>
+
+<h4>7 · Metadata filter</h4>
+<p>Restricts which points are eligible <em>during</em> the search. This is the authorisation
+boundary — filtering after retrieval means you already searched data the user may not
+see.</p>
+<pre><code>from qdrant_client.models import FieldCondition, Filter, MatchValue
+
+client.query_points("docs", query=qvec, limit=4, query_filter=Filter(
+    must=[FieldCondition(key="team", match=MatchValue(value="support"))]))
+</code></pre>
+
+<h4>8 · Payload index</h4>
+<p>Without one, a filter is evaluated by checking points as the walk visits them, which is
+slow and makes dead-ends likely. Index every field you filter on.</p>
+<pre><code>client.create_payload_index("docs", field_name="team", field_schema="keyword")
+</code></pre>
+
+<h4>9 · Quantisation</h4>
+<p>Store vectors as int8 or binary, search on those, then rescore the shortlist with the
+full-precision vectors. Four to thirty-two times less memory for a small recall cost.</p>
+<pre><code>client.update_collection("docs",
+    quantization_config=ScalarQuantization(scalar=ScalarQuantizationConfig(type="int8")))
+</code></pre>
+
+<h4>10 · Hybrid search</h4>
+<p>Most vector databases now store a sparse vector alongside the dense one and fuse the two
+result lists by rank — the reciprocal rank fusion from module 04, run inside the database.</p>
+
+<h4>11 · IVF, the alternative index</h4>
+<p>Cluster the vectors into <code>nlist</code> groups, then search only the
+<code>nprobe</code> nearest clusters. Faster to build and smaller than HNSW, generally lower
+recall at the same speed. It is what pgvector's <code>ivfflat</code> uses.</p>
+
+<h4>12 · The options</h4>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Choice</th><th>Shape</th><th>Pick it when</th></tr></thead>
+<tbody>
+<tr><td><b>pgvector</b></td><td>Postgres extension</td><td>You already run Postgres and are under a few million vectors</td></tr>
+<tr><td><b>Qdrant</b></td><td>Standalone, Rust</td><td>Strong filtering, easy self-hosting</td></tr>
+<tr><td><b>Chroma</b></td><td>Embedded, Python</td><td>Prototypes and local labs</td></tr>
+<tr><td><b>Milvus</b></td><td>Distributed</td><td>Billions of vectors, a team to run it</td></tr>
+<tr><td><b>FAISS</b></td><td>A library, not a database</td><td>You want the index only and will handle storage</td></tr>
+<tr><td><b>Pinecone</b></td><td>Managed</td><td>You want no operations at all</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ================= 8 ================= -->
+<h2 id="state">8 · State and data flow</h2>
+<div class="table-wrap">
+<table>
+<tbody>
+<tr><th>1 · What data is state?</th><td>Vectors, payloads, and the HNSW graph linking them.</td></tr>
+<tr><th>2 · Who writes each field?</th><td>Upserts write vectors and payloads and update the graph incrementally.</td></tr>
+<tr><th>3 · Who reads it?</th><td>Every query reads the graph; only the returned points' payloads are read.</td></tr>
+<tr><th>4 · Replaced, appended or merged?</th><td>Replaced by id. No id means a duplicate, not an update.</td></tr>
+<tr><th>5 · What controls merging?</th><td>The point id. Deriving it from a document id and chunk index makes re-ingestion idempotent.</td></tr>
+<tr><th>6 · Only in memory?</th><td>No — persisted and memory-mapped, though the graph is usually resident.</td></tr>
+<tr><th>7 · Checkpointed?</th><td>Snapshots, and a write-ahead log for durability between them.</td></tr>
+<tr><th>8 · In a database?</th><td>This is the database.</td></tr>
+<tr><th>9 · How long does it survive?</th><td>Until deleted — and <b>a delete is soft</b>, so it still costs memory until compaction.</td></tr>
+<tr><th>10 · What key retrieves it again?</th><td>Collection name plus point id.</td></tr>
+</tbody>
+</table>
+</div>
+
+<svg class="bd-svg" viewBox="0 0 900 190" role="img" aria-labelledby="ix-t ix-d">
+<title id="ix-t">What one query touches</title>
+<desc id="ix-d">Of ten million stored vectors, the metadata filter makes about four hundred thousand eligible, the graph walk visits roughly two thousand of them, and four are returned. The rest of the collection is never read.</desc>
+<rect class="snap s1" x="10" y="34" width="272" height="118" rx="12"></rect>
+<g class="snap-txt">
+<text class="lbl" x="146" y="60">stored</text>
+<text class="cap mono" x="146" y="88">10,000,000 vectors</text>
+<text class="cap" x="146" y="112">30 GB at fp32</text>
+<text class="cap" x="146" y="134">a full scan is 8 s</text>
+</g>
+<rect class="snap s2" x="314" y="34" width="272" height="118" rx="12"></rect>
+<g class="snap-txt">
+<text class="lbl" x="450" y="60">after the filter</text>
+<text class="cap mono" x="450" y="88">~400,000 eligible</text>
+<text class="cap" x="450" y="112">team = support</text>
+<text class="cap" x="450" y="134">payload index used</text>
+</g>
+<rect class="snap s3" x="618" y="34" width="272" height="118" rx="12"></rect>
+<g class="snap-txt">
+<text class="lbl" x="754" y="60">after the walk</text>
+<text class="cap mono" x="754" y="88">~2,000 visited</text>
+<text class="cap mono" x="754" y="112">4 returned, ~12 ms</text>
+<text class="cap" x="754" y="134">recall measured, not assumed</text>
+</g>
+<text class="cap" x="450" y="180">the collection size barely affects the walk — that is what the index bought</text>
+</svg>
+
+<!-- ================= 9 ================= -->
+<h2 id="assembly">9 · Full code, in assembly order</h2>
+<pre><code># 1 · imports
+import hashlib
+
+from qdrant_client import QdrantClient
+from qdrant_client.models import (Distance, FieldCondition, Filter, MatchValue,
+                                  PointStruct, SearchParams, VectorParams)
+
+COLLECTION = "docs"
+DIMS = 768
+
+client = QdrantClient(url="http://localhost:6333")
+
+# 2 · create the collection once
+if not client.collection_exists(COLLECTION):
+    client.create_collection(
+        COLLECTION,
+        vectors_config=VectorParams(size=DIMS, distance=Distance.COSINE),
+    )
+    # index every field that will ever appear in a filter
+    for field in ("team", "doc_id"):
+        client.create_payload_index(COLLECTION, field_name=field, field_schema="keyword")
+
+# 3 · stable ids, so re-ingesting a document updates instead of duplicating
+def point_id(doc_id: str, chunk_index: int) -> int:
+    raw = f"{doc_id}:{chunk_index}".encode()
+    return int.from_bytes(hashlib.sha256(raw).digest()[:8], "big") >> 1
+
+# 4 · ingest, replacing that document's old chunks first
+def ingest(doc_id, chunks, team):
+    client.delete(COLLECTION, points_selector=Filter(
+        must=[FieldCondition(key="doc_id", match=MatchValue(value=doc_id))]))
+    client.upsert(COLLECTION, points=[
+        PointStruct(id=point_id(doc_id, i), vector=embed(text),
+                    payload={"text": text, "doc_id": doc_id, "team": team})
+        for i, text in enumerate(chunks)
+    ])
+
+# 5 · search, filtered and with a score floor
+def search(query, team, k=4, floor=0.55, ef=128):
+    hits = client.query_points(
+        COLLECTION, query=embed(query), limit=k,
+        query_filter=Filter(must=[FieldCondition(key="team",
+                                                 match=MatchValue(value=team))]),
+        search_params=SearchParams(hnsw_ef=ef),
+    ).points
+    keep = [h for h in hits if h.score >= floor]
+    if not keep:
+        raise LookupError(f"nothing above {floor} for: {query}")
+    return keep
+
+# 6 · run it
+for hit in search("how long to return an item?", team="support"):
+    print(round(hit.score, 3), hit.payload["text"][:50])
+</code></pre>
+<p>Steps 3 and 4 together make ingestion idempotent: <b>re-running it on an unchanged
+document produces the same ids and the same vectors, and re-running it on a changed one
+removes the old chunks before writing the new.</b> Without that, every re-ingest doubles the
+collection.</p>
+
+<!-- ================= 10 ================= -->
+<h2 id="trace">10 · Trace</h2>
+<p>The same query at three <code>ef_search</code> values, on ten million vectors.</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th><code>ef_search</code></th><th>Nodes visited</th><th>Latency</th><th>Recall@4</th><th>Reading</th></tr></thead>
+<tbody>
+<tr><td>16</td><td>~300</td><td>3 ms</td><td>0.71</td><td>Fast, and misses one result in three</td></tr>
+<tr><td>64</td><td>~1,200</td><td>8 ms</td><td>0.94</td><td>Reasonable default</td></tr>
+<tr><td>128</td><td>~2,400</td><td>12 ms</td><td>0.98</td><td>Usually where to stop</td></tr>
+<tr><td>512</td><td>~9,000</td><td>41 ms</td><td>0.995</td><td>Three times the latency for 1.5 points</td></tr>
+</tbody>
+</table>
+</div>
+<p>Recall improves quickly and then barely at all, while latency keeps climbing.
+<b><code>ef_search</code> is the one knob to tune, and the curve flattens far earlier than
+people expect.</b></p>
+
+<!-- ================= 11 ================= -->
+<h2 id="break">11 · Break it</h2>
+<p>Filter hard on a field with no payload index:</p>
+<pre><code>search("refund window", team="legal")     # 12 documents out of 10 million
+# returns 1 result, or none — with no error
+</code></pre>
+<p>The graph walk moves toward the query, then discards almost every node it reaches because
+the filter rejects it. It runs out of candidates before finding the twelve that qualify.
+<b>The results are wrong and nothing says so</b> — this is the failure mode people
+misdiagnose as "the embeddings are bad".</p>
+<p>The second failure is quieter still. Ingest the same document twice with generated ids:</p>
+<pre><code>client.upsert(COLLECTION, points=[PointStruct(id=uuid4().int >> 64, ...)])
+</code></pre>
+<p>Now every chunk exists twice. Retrieval returns four results that are two documents
+repeated, the model sees the same passage twice, and the collection has doubled in size.
+Nothing raises.</p>
+
+<svg class="bd-svg" viewBox="0 0 900 175" role="img" aria-labelledby="fw-t fw-d">
+<title id="fw-t">Filtered walk dead-ends</title>
+<desc id="fw-d">A selective filter on an unindexed field means the graph walk reaches nodes that are all rejected. It exhausts its candidate list before finding the few qualifying vectors, and returns too few results with no error raised.</desc>
+<defs><marker id="ah-fw" markerWidth="9" markerHeight="9" refX="8" refY="3.2" orient="auto"><path d="M0 0 L8 3.2 L0 6.4 z" fill="var(--text-muted)"></path></marker></defs>
+<rect class="box b1" x="14" y="62" width="176" height="56" rx="12"></rect>
+<rect class="box fail" x="240" y="62" width="200" height="56" rx="12"></rect>
+<rect class="box after b3" x="490" y="62" width="176" height="56" rx="12"></rect>
+<rect class="box after b5" x="716" y="62" width="170" height="56" rx="12"></rect>
+<path class="arw" d="M193 90 H236" marker-end="url(#ah-fw)"></path>
+<path class="arw" d="M443 90 H486" marker-end="url(#ah-fw)"></path>
+<path class="arw" d="M669 90 H712" marker-end="url(#ah-fw)"></path>
+<text class="lbl" x="102" y="84">filter: 12 of 10M</text>
+<text class="lbl" x="102" y="102">field not indexed</text>
+<text class="lbl" x="340" y="84">walk visits 2,000</text>
+<text class="lbl" x="340" y="102">all rejected</text>
+<text class="lbl" x="578" y="84">candidates</text>
+<text class="lbl" x="578" y="102">exhausted</text>
+<text class="lbl" x="801" y="84">1 result</text>
+<text class="lbl" x="801" y="102">no error</text>
+<path class="xmark" d="M322 130 L358 156 M358 130 L322 156"></path>
+<text class="cap" x="450" y="170">looks like bad embeddings; is actually a missing payload index</text>
+</svg>
+
+<!-- ================= 12 ================= -->
+<h2 id="fix">12 · Fix it</h2>
+<p>Index every filtered field, and let the database switch strategy when a filter is very
+selective:</p>
+<pre><code>client.create_payload_index(COLLECTION, field_name="team", field_schema="keyword")
+</code></pre>
+<p>With the index present, Qdrant estimates how many points pass the filter and falls back to
+an exact scan of that subset when it is small — which is both correct and fast, because the
+subset is tiny.</p>
+<p>Then measure recall rather than assuming it. Exact search is the ground truth:</p>
+<pre><code>import numpy as np
+
+def recall_at_k(queries, k=4, ef=128):
+    hits = 0
+    for q in queries:
+        v = embed(q)
+        exact = set(np.argsort(-(all_vectors @ v))[:k])          # brute force
+        approx = {h.id for h in client.query_points(
+            COLLECTION, query=v, limit=k,
+            search_params=SearchParams(hnsw_ef=ef)).points}
+        hits += len(exact & approx)
+    return hits / (k * len(queries))
+
+for ef in (16, 64, 128, 512):
+    print(ef, round(recall_at_k(sample_queries, ef=ef), 3))
+</code></pre>
+<p>And make ids deterministic so re-ingestion cannot duplicate — the <code>point_id</code>
+function in section 9. <b>Together these three turn every silent failure on this page into
+either a measured number or an impossible state.</b></p>
+
+<!-- ================= 13 ================= -->
+<h2 id="production">13 · Production version</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Concern</th><th>What you do</th></tr></thead>
+<tbody>
+<tr><td>Recall</td><td>Measure against exact search on a sample, per collection. Re-measure after any parameter change</td></tr>
+<tr><td>Filters</td><td>Payload-index every filtered field. An unindexed filter is a correctness bug, not a slow query</td></tr>
+<tr><td>Authorisation</td><td>Filter inside the query. Post-filtering means you searched data the user cannot see, and it also breaks top-k</td></tr>
+<tr><td>Idempotent ids</td><td>Derive the id from document id plus chunk index. Never random</td></tr>
+<tr><td>Deletes</td><td>Soft by default. Schedule compaction, and watch memory against live point count</td></tr>
+<tr><td>Memory</td><td>Vectors plus graph plus payloads. The graph is roughly <code>m × 8</code> bytes per point on top of the vectors</td></tr>
+<tr><td>Quantisation</td><td>int8 with rescoring above a few million vectors. Measure recall before and after</td></tr>
+<tr><td>Backups</td><td>Snapshots. Rebuilding an HNSW index from vectors takes hours at scale</td></tr>
+<tr><td>Model changes</td><td>A new embedding model means a new collection. Build alongside, verify, then switch</td></tr>
+<tr><td>Monitoring</td><td>p95 latency, recall on a fixed sample, live point count, memory</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ================= 14 ================= -->
+<h2 id="comparison">14 · Comparison</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th></th><th>NumPy scan</th><th>pgvector</th><th>Qdrant / Milvus</th><th>Postgres B-tree</th></tr></thead>
+<tbody>
+<tr><th>Exact results</th><td><b>Yes</b></td><td>Exact or approximate</td><td>Approximate</td><td>Yes, but not for similarity</td></tr>
+<tr><th>Scales to</th><td>~100k</td><td>~5M comfortably</td><td><b>Billions</b></td><td>Not applicable</td></tr>
+<tr><th>Filtering</th><td>You write it</td><td><b>Full SQL</b></td><td>Payload filters</td><td>Full SQL</td></tr>
+<tr><th>Persistence</th><td>You write it</td><td>ACID</td><td>Snapshots + WAL</td><td>ACID</td></tr>
+<tr><th>Operational cost</th><td>None</td><td>None extra</td><td>Another service</td><td>None extra</td></tr>
+<tr><th>Use it for</th><td>Labs, under 50k</td><td><b>Most systems</b></td><td>Very large or very high QPS</td><td>The metadata beside the vectors</td></tr>
+</tbody>
+</table>
+</div>
+<p><b>Start with pgvector.</b> Moving to a dedicated vector database is a decision you should
+be pushed into by a measured limit — recall you cannot reach, latency you cannot hold, or a
+collection that no longer fits — not one you make at the design stage.</p>
+
+<div class="carry"><b>Carried over</b> from the previous version of this page, unchanged.</div>
+<h2 id="interview">15 &middot; Interview preparation</h2>
+<details class="collapse"><summary><span class="pill green">Beginner</span>  What is a vector database for? <span class="chev">›</span></summary>
+<div class="collapse-body"><p>To store embeddings and answer "which stored vectors are nearest to this query vector?" at scale and low latency, using approximate nearest-neighbor indexes — plus metadata filtering. It's the storage + retrieval engine of RAG.</p></div></details>
+<details class="collapse"><summary><span class="pill green">Beginner</span>  What does "approximate" mean in ANN? <span class="chev">›</span></summary>
+<div class="collapse-body"><p>The index may not return the exact true nearest neighbors every time — it returns very-close ones much faster than brute force. The miss rate (1 − recall) is small and tunable; you trade a little accuracy for big speed gains.</p></div></details>
+<details class="collapse"><summary><span class="pill blue">Intermediate</span>  Explain HNSW and its key parameters. <span class="chev">›</span></summary>
+<div class="collapse-body"><p>A hierarchical navigable small-world graph: multiple layers, sparse on top for long hops, dense at the bottom holding all vectors. Search starts at the top and greedily descends toward the query — roughly O(log N). Params: <code>M</code> (edges/node → recall &amp; memory), <code>ef_construction</code> (build-time quality), and <code>ef_search</code> (query-time candidates → the live recall/latency dial).</p></div></details>
+<details class="collapse"><summary><span class="pill blue">Intermediate</span>  Pre-filtering vs post-filtering — when does it matter? <span class="chev">›</span></summary>
+<div class="collapse-body"><p>Post-filtering runs ANN then discards non-matches — fine for permissive filters, but selective filters can leave you with too few or zero results because the top-k were all filtered out. Pre-filtering restricts the search space to matching vectors first, giving correct top-k for selective filters. Use pre-filtering for tenant/permission/date constraints.</p></div></details>
+<details class="collapse"><summary><span class="pill amber">Senior</span>  Recall is fine in tests but bad in prod. Diagnose. <span class="chev">›</span></summary>
+<div class="collapse-body"><p>Suspects: (1) production data distribution differs from test; (2) <code>ef_search</code> lowered for latency; (3) selective metadata filters + post-filtering starving results; (4) index not rebuilt after a bulk load, or stale after deletes; (5) embedding model/version drift between index and query (Module 04). Reproduce with a flat-index ground truth on prod queries, compare recall@k, and isolate the variable. Fix the specific cause — often raise ef_search or switch to pre-filtering.</p></div></details>
+<details class="collapse"><summary><span class="pill purple">Staff · design</span>  Design vector search for 1B vectors, multi-tenant, &lt;50ms p99. <span class="chev">›</span></summary>
+<div class="collapse-body"><p>1B × 768 floats won't fit one node in RAM as raw HNSW — use <strong>IVF+PQ</strong> or quantized HNSW to compress, and <strong>shard</strong> by tenant or hash with replicas for HA. Pre-filter by tenant (route to the tenant's shard for isolation + smaller search space). Tune <code>ef_search</code> per route to hit p99 under the recall SLO; add a small re-rank stage (Module 06) on the top candidates to recover precision lost to quantization. Operate: background re-index jobs for model upgrades (versioned vectors), warm caches, monitor recall@k continuously with a sampled ground-truth job, and capacity-plan RAM. Consider a tiered design: quantized index for breadth, exact rescoring on finalists.</p></div></details>
+
+<!-- ================= 16 ================= -->
+<h2 id="short">16 · In short, and what comes next</h2>
+<p class="bd-choose">Remember these five:</p>
+<ul>
+<li>An approximate index checks a few thousand candidates whatever the collection size.</li>
+<li><code>ef_search</code> is the query-time knob. Recall flattens early; latency does
+not.</li>
+<li>Recall is invisible unless you measure it against exact search.</li>
+<li>Filter fields must be payload-indexed, or a selective filter silently returns too
+few.</li>
+<li>Point ids must be derived, not random, or re-ingestion duplicates everything.</li>
+</ul>
+<div class="callout key">
+<div class="c-ico">🔑</div>
+<div class="c-body"><div class="c-title">The one idea to remember</div>
+<p><b>A vector database trades exactness for speed, and the trade is invisible by
+default.</b> Everything operational on this page — recall measurement, payload indexes,
+deterministic ids — exists to make that trade something you chose rather than something that
+happened to you.</p></div>
+</div>
+<p><b>Next:</b> the RAG deep dive joins modules 04 and 05 to a model — chunking, grounding,
+citations, reranking, and the evaluation that tells you whether retrieval or generation
+caused a bad answer.</p>
+
+<div class="page-nav" data-page-nav>
+<a href="04_embeddings.html"><div class="dir">← Previous</div><div class="ttl">04 · Embeddings</div></a>
+<a class="next" href="../rag-deep-dive.html"><div class="dir">Next →</div><div class="ttl">06 · RAG, End-to-End</div></a>
+</div>
+
+</main>
+<div class="toc-rail"><nav class="toc"></nav></div>
+</div>
+</div>
+</div>
+<script src="../assets/app.js?v=20260731b"></script>
+<script src="../assets/sitenav.js?v=20260804b"></script>
+<script src="../assets/enhance.js?v=20260804a"></script>
+<script src="../assets/genai-motion.js?v=20260728a"></script>
+<script src="../assets/glossary.js?v=20260802b"></script>
+</body>
+</html>

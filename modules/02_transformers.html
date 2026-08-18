@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+
+<html data-theme="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#f4f5f8" name="theme-color"/>
+<title>02 · Transformers Deep Dive — GenAI Mastery</title>
+<!-- Interview Preparation brand metadata -->
+<link href="../assets/brand/favicon.svg?v=20260727c" rel="icon" type="image/svg+xml"/>
+<link href="../assets/brand/favicon-32.png?v=20260727c" rel="icon" sizes="32x32" type="image/png"/>
+<link href="../assets/brand/favicon.ico?v=20260727c" rel="shortcut icon"/>
+<link href="../assets/brand/apple-touch-icon.png?v=20260727c" rel="apple-touch-icon" sizes="180x180"/>
+<link href="../assets/brand/site.webmanifest?v=20260727c" rel="manifest"/>
+<link color="#6f47f5" href="../assets/brand/safari-pinned-tab.svg?v=20260727c" rel="mask-icon"/>
+<link href="../assets/brand/social-card.png?v=20260727c" rel="image_src"/>
+<meta content="Switch job" name="application-name"/>
+<meta content="Switch job" name="apple-mobile-web-app-title"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="yes" name="mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="#2563eb" name="msapplication-TileColor"/>
+<meta content="../assets/brand/browserconfig.xml?v=20260727c" name="msapplication-config"/>
+<meta content="website" property="og:type"/>
+<meta content="Switch job Learning Platform" property="og:site_name"/>
+<meta content="02 · Transformers Deep Dive — GenAI Mastery" property="og:title"/>
+<meta content="The transformer architecture from first principles: tokens to embeddings, self-attention, Q/K/V, multi-head attention, positional encoding, residuals, layernorm, and the decoder stack that powers every LLM." property="og:description"/>
+<meta content="../assets/brand/social-card.png?v=20260727c" property="og:image"/>
+<meta content="1200" property="og:image:width"/>
+<meta content="630" property="og:image:height"/>
+<meta content="Switch job learning platform logo" property="og:image:alt"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="02 · Transformers Deep Dive — GenAI Mastery" name="twitter:title"/>
+<meta content="The transformer architecture from first principles: tokens to embeddings, self-attention, Q/K/V, multi-head attention, positional encoding, residuals, layernorm, and the decoder stack that powers every LLM." name="twitter:description"/>
+<meta content="../assets/brand/social-card.png?v=20260727c" name="twitter:image"/>
+<link href="../assets/brand/favicon-16.png?v=20260727c" rel="icon" sizes="16x16" type="image/png"/>
+<!-- /Interview Preparation brand metadata -->
+<meta content="The transformer architecture from first principles: tokens to embeddings, self-attention, Q/K/V, multi-head attention, positional encoding, residuals, layernorm, and the decoder stack that powers every LLM." name="description"/>
+<!-- Theme before first paint. Without this the document paints with the light
+     tokens and only flips when app.js runs at the end of <body>, which is a
+     white flash on every navigation in dark mode. Mirrors app.js's getTheme()
+     exactly — same key, same "light" default — so the pre-paint value can never
+     disagree with what the scripts apply a moment later. Inline and blocking on
+     purpose: an external file would cost a round trip before first paint. -->
+<script>(function(){try{var d=document.documentElement;var t=localStorage.getItem("gp.theme")||"light";d.setAttribute("data-theme",t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="dark"?"#17191e":"#f3f4f6";/* Reading size and width, same reason as the theme: applying them after first paint reflows the whole lesson. Contract shared with enhance.js: key "gp.reading", {"size","width"}; unknown size -> "s" on phones and "xs" above 860px, unknown width -> "wide", unknown align -> "left". */var r={};try{r=JSON.parse(localStorage.getItem("gp.reading"))||{};}catch(e2){}var mob=!!(window.matchMedia&&window.matchMedia("(max-width:860px)").matches);var sz=["xs","s","m","l","xl"].indexOf(r.size)>=0?r.size:(mob?"s":"xs");var wd=["default","wide","full"].indexOf(r.width)>=0?r.width:"wide";var al=r.align==="justify"?"justify":"left";d.setAttribute("data-reading-size",sz);d.setAttribute("data-reading-width",wd);d.setAttribute("data-reading-align",al);/* Page transitions. `PageRevealEvent` is the only honest test for a CROSS-document view transition — CSS @supports(view-transition-name) answers yes on browsers that only do the same-document kind, which is what silently disabled the fallback and left them with a hard cut. Pre-paint for the same reason as the theme: gating this from a body script lets the arrival animation start and then cancels it, which is the flash it removes. */if("PageRevealEvent" in window){d.classList.add("xvt");window.addEventListener("pagereveal",function(ev){if(!ev.viewTransition)return;d.classList.add("vt-in");var off=function(){d.classList.remove("vt-in")};ev.viewTransition.finished.then(off,off);});}}catch(e){}})();</script>
+<link href="../assets/styles.css?v=20260805a" rel="stylesheet"/>
+<link href="../assets/office-theme.css?v=20260805c" rel="stylesheet"/>
+<link href="../assets/genai-motion.css?v=20260804c" rel="stylesheet"/>
+<link href="../assets/glossary.css?v=20260802b" rel="stylesheet"/>
+<!-- Release 2 runtime. The manifest loads first, the renderer second; classic
+     deferred scripts execute in document order after parsing, so the nav slot
+     exists and the manifest is defined before the renderer runs. The authored
+     links inside [data-page-nav] stay in the source and are replaced only after
+     page, route and fragment have all resolved. -->
+<script defer src="../assets/curriculum.js?v=20260804c"></script>
+<script defer src="../assets/page-nav.js?v=20260804c"></script>
+</head>
+<body data-curriculum-id="transformers" data-page="02">
+<div class="app">
+<aside class="sidebar">
+<div class="brand">
+<a class="brand-link" href="../index.html" aria-label="Switch job home">
+<span class="brand-mark" aria-hidden="true"><img src="../assets/brand/switch-job-logo.png?v=20260727c" alt=""/></span>
+<div class="brand-text"><strong>Switch job</strong><span>Learning Platform</span></div>
+</a>
+</div>
+<div class="search-wrap">
+<div class="search-box">
+<svg fill="none" height="15" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="15"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+<input data-search="" placeholder="Search modules…  ( / )" type="text"/>
+</div>
+<div class="search-results"></div>
+</div>
+<nav class="nav"></nav>
+</aside>
+<div class="backdrop"></div>
+<div class="main">
+<header class="topbar">
+<button aria-label="Menu" class="icon-btn menu-btn">
+<svg fill="none" height="18" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="18"><path d="M3 12h18M3 6h18M3 18h18"></path></svg>
+</button>
+<div class="crumbs">Foundations / <b>02 · Transformers Deep Dive</b></div>
+<button aria-label="Toggle theme" class="icon-btn" data-theme-toggle=""></button>
+</header>
+<div class="content-wrap">
+<main class="content">
+
+<div class="eyebrow"><span class="dot"></span> Module 02 · Foundations track</div>
+<h1>Transformers</h1>
+<p class="lead">Module 01 treated "the layers" as one box. This page opens it. A
+transformer layer does one new thing: it lets every position in the sequence read every
+other position, in one operation, with weights the model learned. That is attention, and
+everything else in the block is support for it.</p>
+<div class="meta-row">
+<span class="pill blue">⏱ Study + practice · 14–22 h</span>
+<span class="pill">Difficulty · Advanced</span>
+<span class="pill purple">Prereq · Modules 01, and the gradient idea from step 01</span>
+</div>
+
+<!-- ================= 1 ================= -->
+<h2 id="known">1 · What you already know</h2>
+<p>From module 01: text becomes token ids, ids become vectors, the vectors pass through a
+stack of layers, and the last layer produces one logit per vocabulary entry.</p>
+<p>You also know the loop: one token is sampled, appended, and the whole sequence is read
+again.</p>
+<p><b>The stack of layers was a single box on that page. This page is the inside of one
+of those boxes.</b></p>
+
+<!-- ================= 2 ================= -->
+<h2 id="breaks">2 · What breaks now</h2>
+<p>Before transformers, sequences were processed with a recurrent network: read token 1,
+update a hidden state, read token 2, update it again, and so on to the end.</p>
+<pre><code>h = torch.zeros(hidden_size)
+for token in sequence:            # strictly one at a time
+    h = torch.tanh(W_x @ embed(token) + W_h @ h)
+</code></pre>
+<p>Two problems, and both are structural rather than fixable by better training:</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Problem</th><th>Why the loop causes it</th></tr></thead>
+<tbody>
+<tr><td>Training is slow</td><td>Step 400 needs the result of step 399, so a 1,000-token sequence is 1,000 sequential operations. A GPU with thousands of cores runs them one at a time.</td></tr>
+<tr><td>Long-range links are lost</td><td>Everything token 1 contributed has to survive inside one fixed-size vector through 399 rewrites. In practice it does not.</td></tr>
+</tbody>
+</table>
+</div>
+<p>Both come from the same decision: <b>information travels between positions by passing
+through every position in between.</b> Remove that and both problems go. Attention removes
+it by letting position 400 read position 1 directly, in one step.</p>
+
+<!-- ================= 3 ================= -->
+<h2 id="breakdown">3 · Simple breakdown — transformer vs RNN</h2>
+
+<section class="breakdown">
+
+<h3 class="bd-tech"><span class="bd-tag">A</span> Transformer</h3>
+
+<h4>Basic level</h4>
+<p class="bd-item"><b class="no-jargon">What it is.</b> A transformer is a neural network
+architecture built from stacked blocks, where each block combines a self-attention
+operation with a small feed-forward network, and every position can read every other
+position directly.</p>
+<p class="bd-item"><b class="no-jargon">Core purpose.</b> It removes the sequential
+dependency between positions, so a whole sequence can be processed in parallel during
+training and long-range relationships survive intact.</p>
+<p class="bd-item"><b class="no-jargon">Execution model.</b></p>
+
+<svg class="bd-svg" viewBox="0 0 900 130" role="img" aria-labelledby="tr-t tr-d">
+<title id="tr-t">Transformer execution model</title>
+<desc id="tr-d">Token vectors gain positional information, then every position produces a query, key and value. Attention scores are computed between all pairs, softmax turns them into weights, and each position takes a weighted sum of the values. The feed-forward network then processes each position.</desc>
+<defs><marker id="ah-tr" markerWidth="9" markerHeight="9" refX="8" refY="3.2" orient="auto"><path d="M0 0 L8 3.2 L0 6.4 z" fill="var(--text-muted)"></path></marker></defs>
+<rect class="box b1" x="11" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b2" x="191" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b3" x="371" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b4" x="551" y="40" width="158" height="58" rx="12"></rect>
+<rect class="box b5" x="731" y="40" width="158" height="58" rx="12"></rect>
+<path class="arw" d="M172 69 H186" marker-end="url(#ah-tr)"></path>
+<path class="arw" d="M352 69 H366" marker-end="url(#ah-tr)"></path>
+<path class="arw" d="M532 69 H546" marker-end="url(#ah-tr)"></path>
+<path class="arw" d="M712 69 H726" marker-end="url(#ah-tr)"></path>
+<text class="lbl" x="90" y="65">vectors +</text>
+<text class="lbl" x="90" y="83">position</text>
+<text class="lbl mono" x="270" y="65">Q, K, V</text>
+<text class="lbl" x="270" y="83">per position</text>
+<text class="lbl" x="450" y="65">scores for</text>
+<text class="lbl" x="450" y="83">every pair</text>
+<text class="lbl" x="630" y="65">softmax →</text>
+<text class="lbl" x="630" y="83">weighted sum</text>
+<text class="lbl" x="810" y="65">feed-forward</text>
+<text class="lbl" x="810" y="83">per position</text>
+<circle class="pkt" cx="90" cy="18" r="7"></circle>
+</svg>
+
+<h4>Intermediate level</h4>
+<p class="bd-item"><b class="no-jargon">Architecture under the hood.</b> One block holds
+multi-head self-attention, a two-layer feed-forward network, two layer-norm operations and
+two residual connections. Each head learns its own Q, K and V projections and they run
+side by side. Blocks are identical in shape and stacked — 12 in GPT-2 small, 32 in a
+typical 7B model — with no change in vector width from bottom to top.</p>
+<p class="bd-item"><b class="no-jargon">State handling.</b> During training there is no
+state between positions: the whole sequence is one matrix. During generation the
+<b>KV cache</b> stores the keys and values already computed for earlier positions, so each
+new token computes attention against them instead of recomputing everything.</p>
+<p class="bd-item"><b class="no-jargon">Limitations and advanced features.</b> Attention
+compares every pair of positions, so compute and memory grow with the <b>square</b> of
+sequence length — doubling the context roughly quadruples the attention cost. The KV cache
+grows linearly and often dominates GPU memory at long context. Mitigations include
+grouped-query attention, sliding-window attention, and FlashAttention, which changes how
+the same maths is executed rather than the maths itself.</p>
+
+<h3 class="bd-tech"><span class="bd-tag">B</span> RNN and LSTM</h3>
+
+<h4>Basic level</h4>
+<p class="bd-item"><b class="no-jargon">What it is.</b> A recurrent neural network
+processes a sequence one position at a time, carrying a fixed-size hidden state vector
+forward from each step to the next.</p>
+<p class="bd-item"><b class="no-jargon">Core purpose.</b> It handles sequences of any
+length with a fixed, small amount of memory and a cost that grows linearly rather than
+quadratically.</p>
+<p class="bd-item"><b class="no-jargon">Execution model.</b></p>
+
+<svg class="bd-svg" viewBox="0 0 900 148" role="img" aria-labelledby="rn-t rn-d">
+<title id="rn-t">RNN execution model</title>
+<desc id="rn-d">One token is read, combined with the current hidden state to produce a new hidden state and an output. The new hidden state feeds back in for the next token, so positions are processed strictly one after another.</desc>
+<defs>
+<marker id="ah-rn" markerWidth="9" markerHeight="9" refX="8" refY="3.2" orient="auto"><path d="M0 0 L8 3.2 L0 6.4 z" fill="var(--text-muted)"></path></marker>
+<marker id="ah-rnp" markerWidth="9" markerHeight="9" refX="8" refY="3.2" orient="auto"><path d="M0 0 L8 3.2 L0 6.4 z" fill="var(--accent)"></path></marker>
+</defs>
+<path class="loop" d="M690 58 C690 14, 250 14, 220 50" marker-end="url(#ah-rnp)"></path>
+<text class="loop-lbl" x="455" y="14">the hidden state is the only thing carried forward</text>
+<rect class="box b1" x="11" y="58" width="158" height="58" rx="12"></rect>
+<rect class="box b2" x="191" y="58" width="158" height="58" rx="12"></rect>
+<rect class="box b3" x="371" y="58" width="158" height="58" rx="12"></rect>
+<rect class="box b4" x="551" y="58" width="158" height="58" rx="12"></rect>
+<rect class="box b5" x="731" y="58" width="158" height="58" rx="12"></rect>
+<path class="arw" d="M172 87 H186" marker-end="url(#ah-rn)"></path>
+<path class="arw" d="M352 87 H366" marker-end="url(#ah-rn)"></path>
+<path class="arw" d="M532 87 H546" marker-end="url(#ah-rn)"></path>
+<path class="arw" d="M712 87 H726" marker-end="url(#ah-rn)"></path>
+<text class="lbl" x="90" y="92">token t</text>
+<text class="lbl" x="270" y="83">combine with</text>
+<text class="lbl mono" x="270" y="101">h(t-1)</text>
+<text class="lbl mono" x="450" y="92">tanh / gates</text>
+<text class="lbl" x="630" y="83">new state</text>
+<text class="lbl mono" x="630" y="101">h(t)</text>
+<text class="lbl" x="810" y="92">output t</text>
+<circle class="pkt" cx="90" cy="36" r="7"></circle>
+</svg>
+
+<h4>Intermediate level</h4>
+<p class="bd-item"><b class="no-jargon">Architecture under the hood.</b> A plain RNN
+applies one weight matrix to the input and another to the previous hidden state, then a
+non-linearity. An <b>LSTM</b> adds three learned gates — input, forget and output — plus a
+separate cell state, so the network can hold a value across many steps without it being
+rewritten each time. A GRU merges those gates into two.</p>
+<p class="bd-item"><b class="no-jargon">State handling.</b> One hidden vector, overwritten
+at every position. Everything the model knows about all previous tokens must fit in it.
+Nothing else survives between steps.</p>
+<p class="bd-item"><b class="no-jargon">Limitations and advanced features.</b> Positions
+cannot be computed in parallel, so training does not scale with GPU width. Gradients
+shrink or explode across long chains, which is what the LSTM gates were invented to
+reduce rather than remove. Modern state-space models such as Mamba revisit the same idea
+with a formulation that can be parallelised during training.</p>
+
+<h3 class="bd-diff">The core differences</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th></th><th>Transformer</th><th>RNN / LSTM</th></tr></thead>
+<tbody>
+<tr><th>Workflow design</th>
+<td>All positions computed together. Path length between any two positions is 1.</td>
+<td>Positions computed in order. Path length between positions <em>i</em> and <em>j</em> is the distance between them.</td></tr>
+<tr><th>Error recovery</th>
+<td>Attention weights are inspectable, so you can see which positions a prediction drew on. A wrong answer can be traced to a head and a position.</td>
+<td>The hidden state is one opaque vector. There is no per-position record of what was used, so a wrong answer cannot be attributed.</td></tr>
+<tr><th>Architectural paradigm</th>
+<td>Direct, learned, all-pairs lookup over the sequence.</td>
+<td>A compressed running summary carried forward step by step.</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="bd-short">In short — which one to choose</h3>
+<p class="bd-choose">Use a transformer when:</p>
+<ul>
+<li>You are working with language, which is essentially always in this course.</li>
+<li>Training throughput matters and you have parallel hardware.</li>
+<li>Relationships between distant positions matter.</li>
+</ul>
+<p class="bd-choose">A recurrent model is still reasonable when:</p>
+<ul>
+<li>The sequence is very long and the memory per step must stay constant.</li>
+<li>You are running on a small embedded device with strict memory limits.</li>
+<li>Input arrives continuously and there is no fixed window to attend over.</li>
+</ul>
+<p class="bd-choose bd-avoid">Do not spend time on this comparison when:</p>
+<ul>
+<li>You are choosing an API model. This decision was made for you years ago.</li>
+<li>What you actually need is a longer context, which is a serving question, not an
+architecture one.</li>
+</ul>
+</section>
+
+<!-- ================= 4 ================= -->
+<h2 id="without">4 · Without the technology</h2>
+<p>Here is the recurrent version, complete, so the comparison is concrete rather than
+described:</p>
+<pre><code>import torch
+
+def rnn(tokens, W_x, W_h, hidden=64):
+    h = torch.zeros(hidden)
+    outputs = []
+    for t in tokens:                      # cannot be vectorised
+        h = torch.tanh(W_x @ t + W_h @ h)
+        outputs.append(h)
+    return torch.stack(outputs)
+</code></pre>
+<p>The <code>for</code> is the whole problem. Every iteration needs <code>h</code> from the
+one before, so a 2,000-token sequence is 2,000 dependent matrix multiplications. And
+whatever token 1 contributed to <code>h</code> has been multiplied and squashed 1,999
+times by the end.</p>
+<p><b>The transformer's answer is to delete the loop.</b> Instead of carrying information
+forward, let each position fetch what it needs from all the others at once.</p>
+
+<!-- ================= 5 ================= -->
+<h2 id="mechanics">5 · Runtime mechanics</h2>
+<p>One attention operation, in eight steps. The input is a matrix of shape
+<code>[sequence_length, model_width]</code>.</p>
+<ol>
+<li>Add positional information to the token vectors, so order is represented at all.</li>
+<li>Multiply the input by three learned matrices to get <b>Q</b> (query), <b>K</b> (key)
+and <b>V</b> (value) — one of each per position.</li>
+<li>For every pair of positions, take the dot product of one position's Q with another's
+K. That is the raw score matrix, shape <code>[seq, seq]</code>.</li>
+<li>Divide every score by the square root of the head width, so the numbers stay in a
+range where softmax is not saturated.</li>
+<li>Apply the <b>causal mask</b>: set every score where the key is to the right of the
+query to negative infinity.</li>
+<li>Softmax each row, so each position's scores over all positions sum to 1. These are the
+attention weights.</li>
+<li>Multiply the weights by V. Each position's output is a weighted sum of every value it
+was allowed to see.</li>
+<li>Concatenate the heads, project once, add the residual, normalise, then run the
+feed-forward network on each position independently.</li>
+</ol>
+<p>Steps 2 to 7 happen for all positions at the same time, as matrix multiplications.
+<b>There is no loop over the sequence anywhere.</b></p>
+
+<!-- ================= 6 ================= -->
+<h2 id="smallest">6 · Smallest working version</h2>
+<p>One attention head, in twelve lines, with real numbers you can print.</p>
+<pre><code>import torch
+import torch.nn.functional as F
+
+torch.manual_seed(0)
+seq, width = 4, 8                      # 4 tokens, 8 numbers each
+x = torch.randn(seq, width)
+
+Wq, Wk, Wv = (torch.randn(width, width) for _ in range(3))
+Q, K, V = x @ Wq, x @ Wk, x @ Wv
+
+scores = Q @ K.T / width ** 0.5        # [4, 4] — every pair
+mask = torch.triu(torch.ones(seq, seq), diagonal=1).bool()
+scores = scores.masked_fill(mask, float("-inf"))
+
+weights = F.softmax(scores, dim=-1)    # each row sums to 1
+out = weights @ V                      # [4, 8]
+
+print(weights.round(decimals=2))
+</code></pre>
+<pre><code># tensor([[1.00, 0.00, 0.00, 0.00],
+#         [0.31, 0.69, 0.00, 0.00],
+#         [0.12, 0.55, 0.33, 0.00],
+#         [0.28, 0.19, 0.09, 0.44]])
+</code></pre>
+<p>Read the shape of that matrix. <b>It is triangular</b> — every zero above the diagonal
+is the mask doing its job. Row 1 can only see itself. Row 4 can see all four positions and
+chose to weight itself 0.44 and position 2 at 0.19.</p>
+
+<!-- ================= 7 ================= -->
+<h2 id="components">7 · The components, one at a time</h2>
+
+<h3>Inside one head</h3>
+
+<h4>1 · Query, key and value</h4>
+<p>Three different views of the same token, produced by three learned matrices. The query
+is what this position is looking for; the key is what a position offers; the value is what
+gets passed on if it is selected.</p>
+<pre><code>Q = x @ Wq        # what am I looking for
+K = x @ Wk        # what do I offer
+V = x @ Wv        # what do I contribute
+</code></pre>
+
+<h4>2 · The score</h4>
+<p>A dot product between one query and one key. Larger means the two vectors point in a
+similar direction, which is what "relevant" means here.</p>
+<pre><code>scores = Q @ K.T           # [seq, seq]
+</code></pre>
+
+<h4>3 · Scaling</h4>
+<p>Dot products of <code>d</code>-dimensional vectors grow with <code>d</code>. Without
+dividing by <code>sqrt(d)</code>, softmax receives large values, returns almost one-hot
+weights, and the gradients nearly vanish.</p>
+<pre><code>scores = scores / head_width ** 0.5
+</code></pre>
+
+<h4>4 · The causal mask</h4>
+<p>A decoder must not read the future, or training would be trivial and generation
+impossible. Positions to the right are set to negative infinity <em>before</em> softmax,
+so they come out as exactly zero.</p>
+<pre><code>mask = torch.triu(torch.ones(seq, seq), diagonal=1).bool()
+scores = scores.masked_fill(mask, float("-inf"))
+</code></pre>
+
+<h4>5 · Softmax and the weighted sum</h4>
+<p>Softmax makes each row a set of weights summing to 1. Multiplying by V gives each
+position a blend of the values it attended to.</p>
+<pre><code>out = F.softmax(scores, dim=-1) @ V
+</code></pre>
+
+<h3>Building the block</h3>
+
+<h4>6 · Multi-head attention</h4>
+<p>The width is split into <em>h</em> heads, each with its own Q, K and V projections,
+each computing attention independently. Their outputs are concatenated and projected once.
+Different heads reliably specialise — some track the previous token, some match brackets,
+some follow subject to verb.</p>
+<pre><code>heads = [attention(x, *proj) for proj in head_projections]
+out = torch.cat(heads, dim=-1) @ Wo
+</code></pre>
+
+<h4>7 · Positional encoding</h4>
+<p>Attention is order-blind: shuffle the input rows and the outputs shuffle with them,
+unchanged. Position has to be added to the vectors themselves. Original transformers added
+fixed sine and cosine patterns; most current models use <b>RoPE</b>, which rotates Q and K
+by an angle proportional to position, so the score depends on relative distance.</p>
+
+<h4>8 · Residual connection</h4>
+<p>Each sub-layer adds its output to its input rather than replacing it. This is what
+allows 32 blocks to be stacked without the signal degrading, and what gives gradients a
+short path back to the early layers.</p>
+<pre><code>x = x + attention(norm(x))
+x = x + feed_forward(norm(x))
+</code></pre>
+
+<h4>9 · Layer normalisation</h4>
+<p>Rescales each position's vector to zero mean and unit variance before the sub-layer.
+Modern models place it before rather than after, which makes deep stacks trainable without
+a learning-rate warm-up.</p>
+
+<h4>10 · Feed-forward network</h4>
+<p>Two linear layers with a non-linearity, applied to each position separately. It usually
+expands the width by four and back, and it holds roughly two-thirds of the model's
+parameters. <b>Attention moves information between positions; the feed-forward network
+does the processing at each one.</b></p>
+<pre><code>def ffn(x):
+    return W2 @ F.gelu(W1 @ x)      # width -> 4*width -> width
+</code></pre>
+
+<h4>11 · The block, and the stack</h4>
+<p>One block is attention, then feed-forward, each wrapped in a residual and a norm. The
+stack is that block repeated with different weights. Nothing changes shape from bottom to
+top.</p>
+
+<h4>12 · KV cache</h4>
+<p>At generation time, the keys and values for earlier positions do not change. Storing
+them means each new token computes one query against the cache instead of recomputing the
+whole sequence.</p>
+<pre><code>cache_bytes = 2 * n_layers * n_heads * head_dim * seq_len * 2   # 2 bytes at fp16
+</code></pre>
+<p>For a 7B model at 4,000 tokens this is roughly 2&nbsp;GB, per concurrent request.
+<b>The KV cache, not the weights, is usually what limits how many users one GPU can
+serve.</b></p>
+
+<!-- ================= 8 ================= -->
+<h2 id="state">8 · State and data flow</h2>
+<div class="table-wrap">
+<table>
+<tbody>
+<tr><th>1 · What data is state?</th><td>During training, none between positions. During generation, the KV cache.</td></tr>
+<tr><th>2 · Who writes it?</th><td>Every layer writes its own keys and values for each new token.</td></tr>
+<tr><th>3 · Who reads it?</th><td>The attention step of that same layer, on every later token.</td></tr>
+<tr><th>4 · Replaced, appended or merged?</th><td>Appended. Entries for earlier positions never change.</td></tr>
+<tr><th>5 · What controls merging?</th><td>Nothing — it is a growing tensor per layer.</td></tr>
+<tr><th>6 · Only in memory?</th><td>Yes, in GPU memory, for the length of one request.</td></tr>
+<tr><th>7 · Cached?</th><td>It <em>is</em> the cache. Some servers additionally reuse it across requests that share a prefix.</td></tr>
+<tr><th>8 · In a database?</th><td>Never.</td></tr>
+<tr><th>9 · How long does it survive?</th><td>Until the request finishes, then it is freed.</td></tr>
+<tr><th>10 · What key retrieves it again?</th><td>None, unless the server implements prefix caching keyed by the prompt.</td></tr>
+</tbody>
+</table>
+</div>
+
+<svg class="bd-svg" viewBox="0 0 900 190" role="img" aria-labelledby="kv-t kv-d">
+<title id="kv-t">The KV cache growing</title>
+<desc id="kv-d">After the prompt is processed the cache holds keys and values for five positions. Each generated token appends one more. The cache never shrinks during a request, so memory grows with every token produced.</desc>
+<rect class="snap s1" x="10" y="34" width="272" height="118" rx="12"></rect>
+<g class="snap-txt">
+<text class="lbl" x="146" y="60">after the prompt</text>
+<text class="cap mono" x="146" y="88">K,V for 5 positions</text>
+<text class="cap" x="146" y="112">one forward pass</text>
+<text class="cap" x="146" y="134">computed all 5 at once</text>
+</g>
+<rect class="snap s2" x="314" y="34" width="272" height="118" rx="12"></rect>
+<g class="snap-txt">
+<text class="lbl" x="450" y="60">after token 6</text>
+<text class="cap mono" x="450" y="88">K,V for 6 positions</text>
+<text class="cap" x="450" y="112">1 new query vs 6 keys</text>
+<text class="cap" x="450" y="134">positions 1-5 not recomputed</text>
+</g>
+<rect class="snap s3" x="618" y="34" width="272" height="118" rx="12"></rect>
+<g class="snap-txt">
+<text class="lbl" x="754" y="60">after token 7</text>
+<text class="cap mono" x="754" y="88">K,V for 7 positions</text>
+<text class="cap" x="754" y="112">memory keeps rising</text>
+<text class="cap" x="754" y="134">freed only at the end</text>
+</g>
+<text class="cap" x="450" y="180">the first pass is compute-bound; every pass after it is memory-bound</text>
+</svg>
+
+<!-- ================= 9 ================= -->
+<h2 id="assembly">9 · Full code, in assembly order</h2>
+<p>One complete block, written in the order it executes.</p>
+<pre><code># 1 · imports
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+# 2 · one multi-head self-attention layer
+class SelfAttention(nn.Module):
+    def __init__(self, width, heads):
+        super().__init__()
+        self.heads = heads
+        self.head_dim = width // heads
+        self.qkv = nn.Linear(width, 3 * width, bias=False)
+        self.proj = nn.Linear(width, width, bias=False)
+
+    def forward(self, x):
+        b, seq, width = x.shape
+        q, k, v = self.qkv(x).split(width, dim=-1)
+        # [batch, heads, seq, head_dim]
+        q, k, v = (t.view(b, seq, self.heads, self.head_dim).transpose(1, 2)
+                   for t in (q, k, v))
+
+        scores = q @ k.transpose(-2, -1) / self.head_dim ** 0.5
+        mask = torch.triu(torch.ones(seq, seq, device=x.device), 1).bool()
+        scores = scores.masked_fill(mask, float("-inf"))
+
+        out = F.softmax(scores, dim=-1) @ v
+        out = out.transpose(1, 2).reshape(b, seq, width)
+        return self.proj(out)
+
+# 3 · the feed-forward network
+class FeedForward(nn.Module):
+    def __init__(self, width):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(width, 4 * width), nn.GELU(), nn.Linear(4 * width, width)
+        )
+
+    def forward(self, x):
+        return self.net(x)
+
+# 4 · the block: norm, sub-layer, add — twice
+class Block(nn.Module):
+    def __init__(self, width, heads):
+        super().__init__()
+        self.n1, self.n2 = nn.LayerNorm(width), nn.LayerNorm(width)
+        self.attn, self.ffn = SelfAttention(width, heads), FeedForward(width)
+
+    def forward(self, x):
+        x = x + self.attn(self.n1(x))
+        x = x + self.ffn(self.n2(x))
+        return x
+
+# 5 · run it
+block = Block(width=64, heads=4)
+print(block(torch.randn(1, 10, 64)).shape)      # torch.Size([1, 10, 64])
+</code></pre>
+<p>The output shape equals the input shape. <b>That is why blocks stack: each one refines
+the same representation rather than transforming it into something new.</b></p>
+
+<!-- ================= 10 ================= -->
+<h2 id="trace">10 · Trace</h2>
+<p>A four-token sequence through one head. Widths are for GPT-2 small.</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Step</th><th>Operation</th><th>Shape in</th><th>Shape out</th><th>Cost</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>embed + position</td><td><code>[4]</code> ids</td><td><code>[4, 768]</code></td><td>a lookup</td></tr>
+<tr><td>2</td><td>project to Q, K, V</td><td><code>[4, 768]</code></td><td>3 × <code>[4, 768]</code></td><td>linear in sequence length</td></tr>
+<tr><td>3</td><td><code>Q @ K.T</code></td><td>2 × <code>[4, 64]</code></td><td><code>[4, 4]</code></td><td><b>square</b> in sequence length</td></tr>
+<tr><td>4</td><td>scale and mask</td><td><code>[4, 4]</code></td><td><code>[4, 4]</code></td><td>free</td></tr>
+<tr><td>5</td><td>softmax</td><td><code>[4, 4]</code></td><td><code>[4, 4]</code></td><td>rows sum to 1</td></tr>
+<tr><td>6</td><td><code>weights @ V</code></td><td><code>[4, 4]</code>, <code>[4, 64]</code></td><td><code>[4, 64]</code></td><td>square in sequence length</td></tr>
+<tr><td>7</td><td>concat 12 heads, project</td><td>12 × <code>[4, 64]</code></td><td><code>[4, 768]</code></td><td>linear</td></tr>
+<tr><td>8</td><td>feed-forward</td><td><code>[4, 768]</code></td><td><code>[4, 768]</code></td><td>linear, but most of the FLOPs</td></tr>
+</tbody>
+</table>
+</div>
+<p>Only rows 3 and 6 are quadratic, and they are the entire reason context length is
+expensive. <b>Everything else on this page scales linearly.</b></p>
+
+<!-- ================= 11 ================= -->
+<h2 id="break">11 · Break it</h2>
+<p>Remove the positional encoding and the model stops being able to read.</p>
+<pre><code>x = embeddings                      # no position added
+out_normal = block(x)
+out_shuffled = block(x[:, torch.randperm(x.shape[1]), :])
+# the same set of output vectors, in a different order
+</code></pre>
+<p>Attention alone treats the sequence as an unordered set. "The dog bit the man" and "The
+man bit the dog" produce identical outputs. Nothing raises — the model simply loses
+grammar.</p>
+<p>The second failure is arithmetic, and it is the one that costs money:</p>
+<pre><code>for seq in (1_000, 2_000, 4_000, 8_000):
+    print(seq, "score matrix entries:", f"{seq * seq:,}")
+# 1000   1,000,000
+# 2000   4,000,000
+# 4000  16,000,000
+# 8000  64,000,000
+</code></pre>
+
+<svg class="bd-svg" viewBox="0 0 900 175" role="img" aria-labelledby="qd-t qd-d">
+<title id="qd-t">Quadratic attention cost</title>
+<desc id="qd-d">Doubling the sequence length from two thousand to four thousand tokens quadruples the number of attention score entries, and the memory needed to hold them, until the run fails with an out-of-memory error.</desc>
+<defs><marker id="ah-qd" markerWidth="9" markerHeight="9" refX="8" refY="3.2" orient="auto"><path d="M0 0 L8 3.2 L0 6.4 z" fill="var(--text-muted)"></path></marker></defs>
+<rect class="box b1" x="20" y="66" width="170" height="56" rx="12"></rect>
+<rect class="box b2" x="250" y="66" width="170" height="56" rx="12"></rect>
+<rect class="box b3" x="480" y="66" width="170" height="56" rx="12"></rect>
+<rect class="box fail" x="710" y="66" width="170" height="56" rx="12"></rect>
+<path class="arw" d="M193 94 H246" marker-end="url(#ah-qd)"></path>
+<path class="arw" d="M423 94 H476" marker-end="url(#ah-qd)"></path>
+<path class="arw" d="M653 94 H706" marker-end="url(#ah-qd)"></path>
+<text class="lbl" x="105" y="88">1k tokens</text>
+<text class="lbl mono" x="105" y="106">1M entries</text>
+<text class="lbl" x="335" y="88">2k tokens</text>
+<text class="lbl mono" x="335" y="106">4M entries</text>
+<text class="lbl" x="565" y="88">4k tokens</text>
+<text class="lbl mono" x="565" y="106">16M entries</text>
+<text class="lbl" x="795" y="88">8k tokens</text>
+<text class="lbl mono" x="795" y="106">out of memory</text>
+<path class="xmark" d="M777 132 L813 158 M813 132 L777 158"></path>
+<text class="cap" x="450" y="168">each doubling of length multiplies the attention matrix by four</text>
+</svg>
+
+<!-- ================= 12 ================= -->
+<h2 id="fix">12 · Fix it</h2>
+<p>Positional information goes back in. RoPE is what current models use, because it makes
+the score depend on the distance between two positions rather than their absolute
+indexes:</p>
+<pre><code>def apply_rope(q, k, positions, base=10000.0):
+    d = q.shape[-1]
+    freqs = base ** (-torch.arange(0, d, 2).float() / d)
+    angles = positions[:, None] * freqs[None, :]
+    cos, sin = angles.cos().repeat_interleave(2, -1), angles.sin().repeat_interleave(2, -1)
+    rotate = lambda t: torch.stack((-t[..., 1::2], t[..., ::2]), -1).flatten(-2)
+    return q * cos + rotate(q) * sin, k * cos + rotate(k) * sin
+</code></pre>
+<p>The quadratic cost cannot be removed, only managed. Three levers, in the order you
+should reach for them:</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Lever</th><th>What it changes</th><th>What it costs</th></tr></thead>
+<tbody>
+<tr><td><b>Send less</b></td><td>Retrieve the relevant 2k tokens instead of sending 32k</td><td>A retrieval system — module 06</td></tr>
+<tr><td><b>FlashAttention</b></td><td>Never materialises the full score matrix; same maths, tiled</td><td>Nothing, if your serving stack supports it</td></tr>
+<tr><td><b>Sliding window / GQA</b></td><td>Each position attends to fewer keys, or heads share keys</td><td>Some long-range accuracy</td></tr>
+</tbody>
+</table>
+</div>
+<p><b>The first lever is the one engineers skip and the one that helps most.</b> A 16×
+reduction in prompt length is a 256× reduction in attention cost.</p>
+
+<!-- ================= 13 ================= -->
+<h2 id="production">13 · Production version</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Concern</th><th>What you do</th></tr></thead>
+<tbody>
+<tr><td>Memory planning</td><td>Weights plus KV cache plus activations. The cache is per concurrent request and is usually what runs out first</td></tr>
+<tr><td>Batching</td><td>Continuous batching keeps the GPU busy across requests of different lengths. It also means results can shift slightly between runs</td></tr>
+<tr><td>Prefill versus decode</td><td>The prompt pass is compute-bound; each generated token is memory-bound. They need different tuning and produce different latency curves</td></tr>
+<tr><td>Prefix caching</td><td>Put the stable part of the prompt first so its KV entries can be reused across requests</td></tr>
+<tr><td>Quantisation</td><td>4-bit weights cut memory roughly fourfold. Quantise the KV cache separately — it is often the bigger win</td></tr>
+<tr><td>Long context</td><td>Advertised context length is not free context length. Measure cost and accuracy at your real length before promising it</td></tr>
+<tr><td>Attention kernel</td><td>Use FlashAttention or equivalent. A naive implementation materialises the whole score matrix</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ================= 14 ================= -->
+<h2 id="comparison">14 · Comparison</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th></th><th>Transformer</th><th>RNN / LSTM</th><th>CNN</th><th>State-space (Mamba)</th></tr></thead>
+<tbody>
+<tr><th>Cost in sequence length</th><td>Quadratic</td><td>Linear</td><td>Linear</td><td>Linear</td></tr>
+<tr><th>Trains in parallel</th><td>Yes</td><td>No</td><td>Yes</td><td>Yes</td></tr>
+<tr><th>Path between distant positions</th><td>1 step</td><td>Many steps</td><td>Log, via stacked kernels</td><td>1 recurrence</td></tr>
+<tr><th>State at generation</th><td>KV cache, grows</td><td>Fixed vector</td><td>None</td><td>Fixed vector</td></tr>
+<tr><th>Where it is used now</th><td>Every production LLM</td><td>Small on-device sequence work</td><td>Vision, some audio</td><td>Research, some hybrids</td></tr>
+</tbody>
+</table>
+</div>
+<p>The recurring trade is <b>quadratic cost bought long-range accuracy</b>. Every
+alternative in that table gives some accuracy back to get linear cost, and so far none has
+displaced the transformer for language.</p>
+
+<div class="carry"><b>Carried over</b> from the previous version of this page, unchanged.</div>
+<h2 id="interview">15 &middot; Interview preparation</h2>
+<details class="collapse"><summary><span class="pill green">Beginner</span>  What problem did the transformer solve over RNNs? <span class="chev">›</span></summary>
+<div class="collapse-body"><p>RNNs processed tokens sequentially (slow, un-parallelizable) and struggled with long-range dependencies due to vanishing gradients. The transformer uses self-attention to connect any two tokens directly in one parallel step, enabling both long-range modeling and GPU-efficient training.</p></div></details>
+<details class="collapse"><summary><span class="pill green">Beginner</span>  In attention, what are Q, K, and V? <span class="chev">›</span></summary>
+<div class="collapse-body"><p>Three learned linear projections of each token's embedding. <strong>Query</strong> = what this token is looking for; <strong>Key</strong> = what each token offers for matching; <strong>Value</strong> = the information each token contributes. Output = softmax(Q·Kᵀ/√d)·V — a relevance-weighted blend of values.</p></div></details>
+<details class="collapse"><summary><span class="pill blue">Intermediate</span>  Why divide attention scores by √dₖ? <span class="chev">›</span></summary>
+<div class="collapse-body"><p>In high dimensions, dot products have large variance (∝ dₖ), pushing softmax toward a near one-hot distribution where gradients vanish. Scaling by √dₖ normalizes the variance, keeping the softmax soft and the model trainable.</p></div></details>
+<details class="collapse"><summary><span class="pill blue">Intermediate</span>  Why do residual connections matter for deep transformers? <span class="chev">›</span></summary>
+<div class="collapse-body"><p>Each sub-layer computes <code>x + f(x)</code>. The identity path lets gradients flow directly to earlier layers (avoiding vanishing gradients) and lets each block learn a <em>refinement</em> rather than a full transformation, making 100+ layer stacks trainable.</p></div></details>
+<details class="collapse"><summary><span class="pill amber">Senior</span>  Your model degrades when prompts exceed ~8k tokens. Why, and what are your options? <span class="chev">›</span></summary>
+<div class="collapse-body"><p>Likely exceeding the trained context length — positional encodings are extrapolating to unseen positions, and attention quality drops (lost-in-the-middle). Options: switch to a longer-context model; apply RoPE scaling/interpolation; reduce input via better retrieval/chunking (<a href="../rag-deep-dive.html">RAG, End-to-End</a>); summarize or compress context; or use sliding-window/long-context architectures. Measure with a needle-in-haystack eval before/after.</p></div></details>
+<details class="collapse"><summary><span class="pill amber">Senior</span>  Explain the KV cache in terms of the causal mask. <span class="chev">›</span></summary>
+<div class="collapse-body"><p>Because of the causal mask, token <em>i</em>'s keys/values never depend on future tokens and never change once computed. So during autoregressive generation we cache each token's K and V; generating token <em>t+1</em> only requires computing its own Q and attending over the cached K/V — turning per-step cost from O(t²) recompute into O(t). The cache size grows linearly with context, which is the dominant inference memory cost (mitigated by GQA/paged attention).</p></div></details>
+<details class="collapse"><summary><span class="pill purple">Staff · design</span>  Design an inference-serving layer to maximize throughput for a 70B model. <span class="chev">›</span></summary>
+<div class="collapse-body"><p>Use a server like vLLM/TGI exploiting architectural facts: <strong>continuous batching</strong> (interleave requests at token granularity since each step is independent), <strong>paged KV cache</strong> (non-contiguous KV blocks → near-zero memory fragmentation, more concurrency), <strong>FlashAttention</strong> kernels, <strong>tensor/pipeline parallelism</strong> across GPUs for the large FFN/attention matmuls, <strong>quantization</strong> (e.g. FP8/INT8) to fit weights and speed matmuls, and <strong>GQA</strong> models to shrink the cache. Add prefix/prompt caching for shared system prompts. Tune the batch/context tradeoff against the O(n²) attention curve and your latency SLO.</p></div></details>
+
+<!-- ================= 16 ================= -->
+<h2 id="short">16 · In short, and what comes next</h2>
+<p class="bd-choose">Remember these five:</p>
+<ul>
+<li>Attention lets every position read every other position in one step.</li>
+<li>Q, K and V are three learned views of the same token.</li>
+<li>The causal mask is what stops a decoder reading the future.</li>
+<li>Cost grows with the square of sequence length. Only the score matrix and the weighted
+sum are quadratic.</li>
+<li>Without positional encoding, attention treats the sequence as an unordered set.</li>
+</ul>
+<div class="callout key">
+<div class="c-ico">🔑</div>
+<div class="c-body"><div class="c-title">The one idea to remember</div>
+<p><b>Attention moves information between positions; the feed-forward network does the
+work at each one.</b> Every other part of the block — residuals, norms, multiple heads,
+positional encoding — exists to make those two operations trainable and order-aware.</p></div>
+</div>
+<p><b>Next:</b> module 03 takes these numbers and turns them into hardware. How much VRAM
+a 7B model needs, what quantisation actually changes, and how to run one on your own
+machine — which phase 4's lab depends on.</p>
+
+<div class="page-nav" data-page-nav>
+<a href="01_foundations.html"><div class="dir">← Previous</div><div class="ttl">01 · Foundations of LLMs</div></a>
+<a class="next" href="03_local_llms.html"><div class="dir">Next →</div><div class="ttl">03 · Local LLMs &amp; Ollama</div></a>
+</div>
+
+</main>
+<div class="toc-rail"><nav class="toc"></nav></div>
+</div>
+</div>
+</div>
+<script src="../assets/app.js?v=20260731b"></script>
+<script src="../assets/sitenav.js?v=20260804b"></script>
+<script src="../assets/enhance.js?v=20260804a"></script>
+<script src="../assets/genai-motion.js?v=20260728a"></script>
+<script src="../assets/glossary.js?v=20260802b"></script>
+</body>
+</html>
