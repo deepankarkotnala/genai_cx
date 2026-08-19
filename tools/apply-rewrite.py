@@ -114,6 +114,22 @@ def main():
                      "Check the carry-over fragment for page-tail markup."
                      % (args.page, got, tag, want))
 
+    # Outbound-link guard. Three separate waves shipped a rewrite that silently
+    # dropped a cross-page link the live page carried -- twice it was the
+    # Release 3.1 canonical middleware anchor, which turned a validator check
+    # amber days later. A rewrite legitimately drops most old links, so this
+    # warns rather than refusing, but it names them so the decision is made
+    # rather than discovered.
+    def outbound(html):
+        return {h for h in re.findall(r'href="([^"#]*#[^"]+)"', html)
+                if not h.startswith(("http", "mailto"))}
+
+    dropped = sorted(outbound(live) - outbound(out))
+    if dropped:
+        print("  WARNING: %d cross-page link(s) present before, absent now:" % len(dropped))
+        for href in dropped:
+            print("    - %s" % href)
+
     ids = re.findall(r'\sid="([^"]+)"', out)
     dupes = sorted({i for i in ids if ids.count(i) > 1})
     if dupes:
@@ -128,7 +144,10 @@ def main():
     print("wrote %s" % args.page)
     print("  sections: %d" % len(re.findall(r'<h2 id="', new)))
     print("  diagrams: %d" % len(re.findall(r'<svg class="bd-svg"', new)))
-    print("  questions carried: %d" % new.count('<details class="collapse"'))
+    # Count any <details>, not just class="collapse": pages carry questions as
+    # .collapse, .recall or .prep-question, and counting one class reported 0
+    # for a page that had six.
+    print("  questions carried: %d" % new.count("<details"))
 
 
 if __name__ == "__main__":

@@ -95,7 +95,17 @@ def extract(verify_only=False):
         frags = [section_after(src, h.start()) for h in hits]
         frag = "\n".join(frags)
         words = word_count(frag)
-        questions = (frag.count('<details class="collapse"')
+        # Count any <details> block, not just class="collapse": pages carry their
+        # questions as .collapse, .recall or .prep-question, and counting one class
+        # reported 0 questions for pages that plainly had six. The archived words
+        # were always correct -- only this number was wrong.
+        # Pages carry questions in three different shapes: <details> blocks
+        # (.collapse / .recall / .prep-question), "Q &middot;" callouts, or plain
+        # <h3> headings. Counting only one shape reported 0 questions for pages
+        # that plainly had several. The archived words were always right -- only
+        # this number was wrong.
+        questions = (frag.count("<details")
+                     or len(re.findall(r"Q\s*(?:&middot;|·|\.)\s", frag))
                      or len(re.findall(r"<h3[ >]", frag)))
 
         if words < 20:
