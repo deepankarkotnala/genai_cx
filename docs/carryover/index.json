@@ -7,7 +7,7 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 0,
+      "questions": 5,
       "words": 456,
       "fragment": "docs/carryover/interview/agent-protocols.html"
     },
@@ -34,13 +34,178 @@
       "fragment": "docs/carryover/interview/capstone-projects.html"
     },
     {
+      "id": "cx-01",
+      "path": "teach-agents/campusx/01-what-a-model-does.html",
+      "title": "What a language model actually does",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 6,
+      "words": 308,
+      "fragment": "docs/carryover/interview/cx-01.html"
+    },
+    {
+      "id": "cx-02",
+      "path": "teach-agents/campusx/02-the-agent-loop.html",
+      "title": "The agent loop",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 6,
+      "words": 329,
+      "fragment": "docs/carryover/interview/cx-02.html"
+    },
+    {
+      "id": "cx-03",
+      "path": "teach-agents/campusx/03-tools-and-the-boundary.html",
+      "title": "Tools and the trust boundary",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 6,
+      "words": 331,
+      "fragment": "docs/carryover/interview/cx-03.html"
+    },
+    {
+      "id": "cx-04",
+      "path": "teach-agents/campusx/04-reasoning-patterns.html",
+      "title": "Reasoning patterns",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 6,
+      "words": 313,
+      "fragment": "docs/carryover/interview/cx-04.html"
+    },
+    {
+      "id": "cx-05",
+      "path": "teach-agents/campusx/05-retrieval.html",
+      "title": "Retrieval",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 6,
+      "words": 342,
+      "fragment": "docs/carryover/interview/cx-05.html"
+    },
+    {
+      "id": "cx-06",
+      "path": "teach-agents/campusx/06-context-and-memory.html",
+      "title": "Context and memory",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 6,
+      "words": 341,
+      "fragment": "docs/carryover/interview/cx-06.html"
+    },
+    {
+      "id": "cx-07",
+      "path": "teach-agents/campusx/07-reliability.html",
+      "title": "Reliability",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 6,
+      "words": 357,
+      "fragment": "docs/carryover/interview/cx-07.html"
+    },
+    {
+      "id": "cx-08",
+      "path": "teach-agents/campusx/08-irreversible-actions.html",
+      "title": "Irreversible actions",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 6,
+      "words": 343,
+      "fragment": "docs/carryover/interview/cx-08.html"
+    },
+    {
+      "id": "cx-09",
+      "path": "teach-agents/campusx/09-security.html",
+      "title": "Security",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 6,
+      "words": 344,
+      "fragment": "docs/carryover/interview/cx-09.html"
+    },
+    {
+      "id": "cx-10",
+      "path": "teach-agents/campusx/10-evaluation.html",
+      "title": "Evaluation",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 6,
+      "words": 349,
+      "fragment": "docs/carryover/interview/cx-10.html"
+    },
+    {
+      "id": "cx-11",
+      "path": "teach-agents/campusx/11-tracing-and-cost.html",
+      "title": "Tracing and cost",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 6,
+      "words": 321,
+      "fragment": "docs/carryover/interview/cx-11.html"
+    },
+    {
+      "id": "cx-12",
+      "path": "teach-agents/campusx/12-mcp.html",
+      "title": "MCP",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 6,
+      "words": 313,
+      "fragment": "docs/carryover/interview/cx-12.html"
+    },
+    {
+      "id": "cx-13",
+      "path": "teach-agents/campusx/13-multi-agent.html",
+      "title": "Multi-agent",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 6,
+      "words": 318,
+      "fragment": "docs/carryover/interview/cx-13.html"
+    },
+    {
+      "id": "cx-14",
+      "path": "teach-agents/campusx/14-deployment.html",
+      "title": "Deployment",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 6,
+      "words": 319,
+      "fragment": "docs/carryover/interview/cx-14.html"
+    },
+    {
+      "id": "cx-15",
+      "path": "teach-agents/campusx/15-capstone.html",
+      "title": "Capstone",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 6,
+      "words": 403,
+      "fragment": "docs/carryover/interview/cx-15.html"
+    },
+    {
       "id": "drill-fastapi",
       "path": "interview-labs/fastapi-interview.html",
       "title": "FastAPI",
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 5,
       "words": 145,
       "fragment": "docs/carryover/interview/drill-fastapi.html"
     },
@@ -51,7 +216,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 5,
       "words": 156,
       "fragment": "docs/carryover/interview/drill-langchain.html"
     },
@@ -62,7 +227,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 5,
       "words": 151,
       "fragment": "docs/carryover/interview/drill-mcp.html"
     },
@@ -73,7 +238,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 5,
       "words": 151,
       "fragment": "docs/carryover/interview/drill-python-sync-async.html"
     },
@@ -84,7 +249,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 5,
       "words": 155,
       "fragment": "docs/carryover/interview/drill-rag.html"
     },
@@ -95,7 +260,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 5,
       "words": 152,
       "fragment": "docs/carryover/interview/drill-websockets.html"
     },
@@ -117,9 +282,20 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 1,
+      "questions": 16,
       "words": 1667,
       "fragment": "docs/carryover/interview/genai-g0.html"
+    },
+    {
+      "id": "hermes",
+      "path": "hermes.html",
+      "title": "Hermes \u2014 open local models",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 6,
+      "words": 532,
+      "fragment": "docs/carryover/interview/hermes.html"
     },
     {
       "id": "langchain",
@@ -139,9 +315,20 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 0,
-      "words": 228,
+      "questions": 6,
+      "words": 224,
       "fragment": "docs/carryover/interview/langgraph-asyncio.html"
+    },
+    {
+      "id": "langgraph-deep-dive",
+      "path": "langgraph.html",
+      "title": "LangGraph & components",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 7,
+      "words": 384,
+      "fragment": "docs/carryover/interview/langgraph-deep-dive.html"
     },
     {
       "id": "langgraph-module",
@@ -161,8 +348,8 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 0,
-      "words": 220,
+      "questions": 6,
+      "words": 216,
       "fragment": "docs/carryover/interview/langgraph-pydantic.html"
     },
     {
@@ -183,7 +370,7 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 0,
+      "questions": 7,
       "words": 332,
       "fragment": "docs/carryover/interview/llm-evals.html"
     },
@@ -205,7 +392,7 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 0,
+      "questions": 6,
       "words": 277,
       "fragment": "docs/carryover/interview/llmops.html"
     },
@@ -232,13 +419,24 @@
       "fragment": "docs/carryover/interview/mcp-module.html"
     },
     {
+      "id": "memory",
+      "path": "memory.html",
+      "title": "Memory in LLMs",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 7,
+      "words": 412,
+      "fragment": "docs/carryover/interview/memory.html"
+    },
+    {
       "id": "ml-00",
       "path": "machine-learning/00-interview-landscape.html",
       "title": "ML Interview Landscape & Study Setup",
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 6,
       "words": 1477,
       "fragment": "docs/carryover/interview/ml-00.html"
     },
@@ -249,7 +447,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 9,
       "words": 2283,
       "fragment": "docs/carryover/interview/ml-01.html"
     },
@@ -260,7 +458,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 7,
       "words": 2135,
       "fragment": "docs/carryover/interview/ml-02.html"
     },
@@ -271,7 +469,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 7,
       "words": 2155,
       "fragment": "docs/carryover/interview/ml-03.html"
     },
@@ -282,7 +480,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 9,
       "words": 2921,
       "fragment": "docs/carryover/interview/ml-04.html"
     },
@@ -293,7 +491,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 9,
       "words": 2717,
       "fragment": "docs/carryover/interview/ml-05.html"
     },
@@ -304,7 +502,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 11,
       "words": 3352,
       "fragment": "docs/carryover/interview/ml-06.html"
     },
@@ -315,7 +513,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 16,
       "words": 4602,
       "fragment": "docs/carryover/interview/ml-07.html"
     },
@@ -326,7 +524,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 8,
       "words": 2680,
       "fragment": "docs/carryover/interview/ml-08.html"
     },
@@ -337,7 +535,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 9,
       "words": 3118,
       "fragment": "docs/carryover/interview/ml-09.html"
     },
@@ -348,7 +546,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 9,
       "words": 1976,
       "fragment": "docs/carryover/interview/ml-10.html"
     },
@@ -359,7 +557,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 4,
       "words": 988,
       "fragment": "docs/carryover/interview/ml-11.html"
     },
@@ -370,7 +568,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 5,
       "words": 1251,
       "fragment": "docs/carryover/interview/ml-12.html"
     },
@@ -381,7 +579,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 6,
       "words": 1415,
       "fragment": "docs/carryover/interview/ml-13.html"
     },
@@ -392,7 +590,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 6,
       "words": 1505,
       "fragment": "docs/carryover/interview/ml-14.html"
     },
@@ -403,7 +601,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 6,
       "words": 1391,
       "fragment": "docs/carryover/interview/ml-15.html"
     },
@@ -414,7 +612,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 6,
       "words": 1583,
       "fragment": "docs/carryover/interview/ml-16.html"
     },
@@ -425,7 +623,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 6,
       "words": 1536,
       "fragment": "docs/carryover/interview/ml-17.html"
     },
@@ -436,7 +634,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 6,
       "words": 1674,
       "fragment": "docs/carryover/interview/ml-18.html"
     },
@@ -447,7 +645,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 6,
       "words": 1574,
       "fragment": "docs/carryover/interview/ml-19.html"
     },
@@ -458,7 +656,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 4,
       "words": 1030,
       "fragment": "docs/carryover/interview/ml-20.html"
     },
@@ -469,7 +667,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 5,
       "words": 1431,
       "fragment": "docs/carryover/interview/ml-21.html"
     },
@@ -480,7 +678,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 6,
       "words": 2050,
       "fragment": "docs/carryover/interview/ml-22.html"
     },
@@ -491,7 +689,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 3,
       "words": 816,
       "fragment": "docs/carryover/interview/ml-23.html"
     },
@@ -502,7 +700,7 @@
       "sectionIds": [
         "questions"
       ],
-      "questions": 0,
+      "questions": 60,
       "words": 2248,
       "fragment": "docs/carryover/interview/ml-24.html"
     },
@@ -529,13 +727,24 @@
       "fragment": "docs/carryover/interview/production-genai.html"
     },
     {
+      "id": "rag-deep-dive",
+      "path": "rag-deep-dive.html",
+      "title": "RAG, End-to-End",
+      "sectionIds": [
+        "interview"
+      ],
+      "questions": 8,
+      "words": 902,
+      "fragment": "docs/carryover/interview/rag-deep-dive.html"
+    },
+    {
       "id": "ta-l01",
       "path": "teach-agents/lessons/0001-llm-mechanics.html",
       "title": "LLM mechanics",
       "sectionIds": [
         "interview"
       ],
-      "questions": 1,
+      "questions": 5,
       "words": 718,
       "fragment": "docs/carryover/interview/ta-l01.html"
     },
@@ -546,7 +755,7 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 1,
+      "questions": 5,
       "words": 893,
       "fragment": "docs/carryover/interview/ta-l02.html"
     },
@@ -557,7 +766,7 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 1,
+      "questions": 5,
       "words": 874,
       "fragment": "docs/carryover/interview/ta-l03.html"
     },
@@ -568,7 +777,7 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 1,
+      "questions": 5,
       "words": 811,
       "fragment": "docs/carryover/interview/ta-l04.html"
     },
@@ -579,7 +788,7 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 1,
+      "questions": 5,
       "words": 928,
       "fragment": "docs/carryover/interview/ta-l05.html"
     },
@@ -590,7 +799,7 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 1,
+      "questions": 5,
       "words": 891,
       "fragment": "docs/carryover/interview/ta-l06.html"
     },
@@ -601,7 +810,7 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 1,
+      "questions": 5,
       "words": 874,
       "fragment": "docs/carryover/interview/ta-l07.html"
     },
@@ -612,7 +821,7 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 1,
+      "questions": 5,
       "words": 1015,
       "fragment": "docs/carryover/interview/ta-l08.html"
     },
@@ -623,7 +832,7 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 1,
+      "questions": 5,
       "words": 1034,
       "fragment": "docs/carryover/interview/ta-l09.html"
     },
@@ -634,7 +843,7 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 1,
+      "questions": 5,
       "words": 951,
       "fragment": "docs/carryover/interview/ta-l10.html"
     },
@@ -645,7 +854,7 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 1,
+      "questions": 5,
       "words": 982,
       "fragment": "docs/carryover/interview/ta-l11.html"
     },
@@ -656,7 +865,7 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 1,
+      "questions": 5,
       "words": 1017,
       "fragment": "docs/carryover/interview/ta-l12.html"
     },
@@ -667,7 +876,7 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 1,
+      "questions": 5,
       "words": 1074,
       "fragment": "docs/carryover/interview/ta-l13.html"
     },
@@ -678,7 +887,7 @@
       "sectionIds": [
         "interview"
       ],
-      "questions": 1,
+      "questions": 5,
       "words": 973,
       "fragment": "docs/carryover/interview/ta-l14.html"
     },
