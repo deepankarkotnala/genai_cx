@@ -269,7 +269,7 @@ for message in runner:        # the SDK runs the whole loop; each step yields a 
         <div class="callout tip">
           <div class="c-ico">⚖️</div>
           <div class="c-body"><div class="c-title">Tool runner vs manual loop</div>
-          <p>Use the <strong>tool runner</strong> for the common case — it handles the loop, schema generation and result-feeding. Drop to the <strong>manual loop</strong> when you need fine-grained control: custom logging, conditional execution, or a <em>human approval gate</em> before each tool runs (the human-in-the-loop pattern from <a href="guardrails.html#failure">Guardrails</a> and <a href="langgraph.html#hitl">LangGraph</a>).</p></div>
+          <p>Use the <strong>tool runner</strong> for the common case — it handles the loop, schema generation and result-feeding. Drop to the <strong>manual loop</strong> when you need fine-grained control: custom logging, conditional execution, or a <em>human approval gate</em> before each tool runs (the human-in-the-loop pattern from <a href="guardrails.html#components">Guardrails</a> and <a href="langgraph.html#components">LangGraph</a>).</p></div>
         </div>
 
         <!-- 6 -->
@@ -292,7 +292,7 @@ for message in runner:        # the SDK runs the whole loop; each step yields a 
 
         <!-- 7 -->
         <h2 id="context">7 · Context &amp; sessions — staying coherent over a long run</h2>
-        <p>The Messages API is <strong>stateless</strong>: you resend the full conversation each turn (see the <a href="memory.html#stateless">Memory tab</a>). Over a long agent run the history can outgrow the context window, so Claude agents manage context with a few built-in mechanisms:</p>
+        <p>The Messages API is <strong>stateless</strong>: you resend the full conversation each turn (see the <a href="memory.html#breaks">Memory tab</a>). Over a long agent run the history can outgrow the context window, so Claude agents manage context with a few built-in mechanisms:</p>
         <div class="table-wrap">
           <table>
             <tr><th>Mechanism</th><th>What it does</th><th>When</th></tr>

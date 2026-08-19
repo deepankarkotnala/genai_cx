@@ -367,8 +367,95 @@ the same position.
 | CRAG | `rag-deep-dive.html` |
 | Self-RAG | `rag-deep-dive.html` |
 
-The ninth — **"LLMs do not have memory" as its own idea** — is still open. It
-belongs on `memory.html`, which is wave 6.
+The ninth — **"LLMs do not have memory" as its own idea** — was closed in
+wave 6. It is now `memory.html` §2's opening premise. **All nine §7 coverage
+gaps are closed.**
+
+**Wave 6 — complete.** 6 pages rewritten, bringing the verified total to
+**39 of 58**.
+
+| Page | Comparison (A vs B) | Questions |
+| --- | --- | --- |
+| `memory.html` | memory store vs a longer context window | 7 **new** |
+| `llm-evals.html` | evaluation suite vs manual review | 7 carried |
+| `guardrails.html` | code guardrail vs a system-prompt instruction | 7 **new** |
+| `llmops.html` | LLMOps vs MLOps | 6 carried |
+| `langfuse.html` | tracing platform vs your own logging | 7 **new** |
+| `modules/14_production_genai.html` | production system vs a working prototype | 7 carried |
+
+**The last §7 coverage gap is closed.** "LLMs do not have memory" is now
+`memory.html` §2's opening premise, demonstrated in two calls, with a table
+separating it from the three assumptions people substitute for it — including
+that checkpointing is memory, which it is not.
+
+**A third carry-over counting shape.** After waves 5's `class="recall"` and
+`Q &middot;` fixes, `llm-evals.html` and `llmops.html` still reported 0
+questions because theirs are `Q.` callouts. The counter now recognises all
+three, and the archive reports **83 pages / 577 questions / 80,606 words**.
+Verified with `--verify`: no archived byte changed. Three pages — `memory.html`,
+`guardrails.html`, `langfuse.html` — genuinely have no interview section
+anywhere in their history, so theirs were authored and labelled new.
+
+### Two tooling guards added, both from defects that had already shipped
+
+**`tools/make-rewrite-body.py`** — the wave-5 harness, promoted from scratch
+with a `_check_closed` guard. A section body ending in prose rather than a tag
+is a `<p>` that was never closed: browsers close it, so the page renders, but
+the source and the output disagree and anchor matching silently fails. It fired
+on nine sections of the first wave-6 page and on every page after.
+
+**`tools/apply-rewrite.py` now warns on dropped cross-page links.** Three
+consecutive waves shipped a rewrite that silently removed a link the live page
+carried; twice it was the Release 3.1 canonical middleware anchor, which turned
+`middleware-cross-links` amber days later. The guard warns rather than refusing,
+because a rewrite legitimately drops most old links — but it names them, so the
+decision is made rather than discovered. **It caught two real cross-references
+on its first run**, and four more across wave 6 that were restored pointing at
+the rewritten targets' new sections.
+
+Validator after wave 6: **5 failed, 3 warnings** — the pre-existing baseline.
+All 39 rewritten pages pass the four checks, their Python snippets compile, and
+the 190 project tests pass.
+
+**Wave 5 — complete.** 4 pages rewritten, bringing the verified total to
+**33 of 58**.
+
+| Page | Comparison (A vs B) | Diagrams | Questions |
+| --- | --- | --- | --- |
+| `langgraph-asyncio.html` | asyncio vs threads | 3 | 6 carried |
+| `langgraph.html` | checkpointer vs process state | 3 | 7 **new** |
+| `modules/13_multi_agents.html` | supervisor vs one agent with every tool | 3 | 7 carried |
+| `agent-protocols.html` | MCP vs A2A, with A2UI as a third column | 3 | 5 carried |
+
+`langgraph.html` had no interview section anywhere in its history, so seven were
+written for it and labelled new — the standing `hermes.html` rule.
+
+**Two defects found in the carry-over tooling, both counting bugs rather than
+lost content.** `extract-interview-carryover.py` counted only
+`<details class="collapse">`, so pages using `class="recall"` or `Q &middot;`
+callouts reported **0 questions** while their archived text was complete and
+correct. `apply-rewrite.py` had the same bug in its confirmation line. Both now
+count any `<details>` plus callout-style questions, and the archive reports
+**81 pages / 550 questions / 79,814 words** rather than 99 questions. Verified
+with `--verify`: no archived byte changed, only the counts.
+
+**The §8.3 anchor risk fired again**, as it now has in every wave that touches a
+linked page: rewriting `langgraph.html` broke `claude-agent.html -> #hitl`,
+remapped to `#components` where the `interrupt` material now lives. And the
+`agent-protocols.html` rewrite dropped the Release 3.1 canonical link, turning
+`middleware-cross-links` amber; the link is restored in the section that makes
+the same point, so the check is green again. **Both were caught by the validator
+rather than by reading**, which is the argument for running it after every page.
+
+**A source-level habit worth recording:** several section bodies ended in prose
+with no closing `</p>`. Browsers close it, so the pages rendered correctly, but
+anchor-matching against the generated HTML failed and the source disagreed with
+the output. All wave-5 bodies now close their paragraphs.
+
+Validator after wave 5: **5 failed, 3 warnings** — the pre-existing baseline.
+`rewrite-sections`, `rewrite-block`, `rewrite-diagrams` and
+`interview-carryover` cover 33 pages and are green; all 33 pages' Python
+snippets compile; the 190 project tests pass.
 
 **Wave 4 — in progress.** `modules/08_agents.html` (16 sections, 4 diagrams, 7
 carried) and `modules/09_mcp.html` (16 sections, 3 diagrams, 7 carried) are
